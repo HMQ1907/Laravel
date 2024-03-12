@@ -23,16 +23,22 @@ class LoginFormRequest extends FormRequest
     {
         return [
             //
-            'email'=>'required|email',
-            'password'=>'required',
+            'email' =>'required|email',
+            'password' => 'required',
         ];
     }
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
-            'email.required'=>'Email không được để trống',
-            'email.email'=>'Email không đúng định dạng',
-            'password.required'=>'Mật khẩu không được để trống',
+            //
+            'email.required' => 'Chưa điền email',
+            'email.email' => 'Email sai định dạng',
+            'password.required' => 'Chưa điền password',
         ];
     }
 }

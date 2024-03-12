@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,11 +17,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login',[AuthController::class, 'index']);
-Route::post('/login',[AuthController::class,'login'])->name('login');
-Route::post('/logout',[AuthController::class,'logout'])->name('logout');
-Route::middleware('authenticate')->group(function(){
-    Route::get('/product', function () {
-        return view('product.index');
-    })->name('product');
+Route::get('/login', [AuthController::class, 'index']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('auth')->group(function () {
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/', [UserController::class, 'index'])->name('user.index');
+        Route::post('/search', [UserController::class, 'search'])->name('user.search');
+        Route::post('/create', [UserController::class, 'create'])->name('user.create');
+    });
+    Route::get('product', [ProductController::class, 'index'])->name('product.index');
 });
