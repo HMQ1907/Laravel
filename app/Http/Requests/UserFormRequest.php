@@ -25,7 +25,7 @@ class UserFormRequest extends FormRequest
             //
             'name' => ['required', 'string', 'min:5'],
             'email' => ['required', 'string', 'email', 'unique:users'],
-            'password' => ['required', 'string', 'min:5', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
+            'password' => ['required', 'string', 'min:5'],
         ];
     }
     /**
@@ -43,7 +43,6 @@ class UserFormRequest extends FormRequest
             'email.unique' => 'Email đã được đăng ký',
             'password.required' => 'Mật khẩu không được để trống',
             'password.min' => 'Mật khẩu phải hơn 5 ký tự',
-            'password.regex' => 'Mật khẩu không bảo mật',
         ];
     }
 }
