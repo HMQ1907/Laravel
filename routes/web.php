@@ -24,7 +24,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', [UserController::class, 'index'])->name('user.index');
-        Route::post('/search', [UserController::class, 'search'])->name('user.search');
+        Route::get('/{id}',[UserController::class,'getUserById'])->name('user.detail');
+        Route::match(['get','post'],'/search', [UserController::class, 'search'])->name('user.search');
         Route::post('/create', [UserController::class, 'create'])->name('user.create');
     });
     Route::get('product', [ProductController::class, 'index'])->name('product.index');

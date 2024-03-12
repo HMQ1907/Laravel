@@ -82,7 +82,7 @@
                             @endif
                         </td>
                         <td style="gap: 5px;" class="d-flex flex-row">
-                            <i style="color: blue;cursor:pointer" class="fa fa-pencil edit_user" aria-hidden="true"></i>
+                            <i id="edit_user_{{ $user->id }}" style="color: blue;cursor:pointer" class="fa fa-pencil edit_user" aria-hidden="true"></>
                             <i style="color: red;cursor:pointer" class="fa fa-trash remove_user" aria-hidden="true"></i>
                             <i style="color: black;cursor:pointer" class="fa fa-user-times block_user"
                                 aria-hidden="true"></i>
@@ -92,6 +92,11 @@
                 <div id="search-results"></div>
             </tbody>
         </table>
+        {{-- Paginate --}}
+        <div id="paginate_all" class="d-flex justify-content-center">
+            {{ $users->links() }}
+        </div>
+        <div id="pagination-links"></div>
     </div>
     <!-- Modal -->
     <div class="modal fade" id="addEditUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -106,7 +111,7 @@
                 </div>
                 <div class="modal-body">
                     {{-- Start Form --}}
-                    <form>
+                    <form id="userForm" >
                         @csrf
                         <div class="form-group">
                             <label for="name">Tên</label>
@@ -150,7 +155,7 @@
                         <div id="alert_error" class="text-danger" role="alert">
                         </div>
                         <div class="modal-footer">
-                            <button id="create_user" type="button" class="btn btn-primary">Lưu</button>
+                            <button  id="create_edit_user" type="button" class="btn btn-primary"></button>
                     </form>
                 </div>
             </div>
@@ -164,5 +169,6 @@
     <script>
         let search_url = "{{ route('user.search') }}";
         let create_url = "{{ route('user.create') }}";
+        let detail_url_template = "{{ route('user.detail', ['id' => ':id']) }}";
     </script>
 @endpush

@@ -15,14 +15,17 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 25; $i++) {
+            $groupRole = rand(0, 1) ? 'editor' : 'reviewer'; 
+            $is_active = rand(0, 1) ? '0' : '1';
+            
             DB::table('users')->insert([
                 'name' => 'User ' . ($i + 1),
                 'email' => 'user' . ($i + 1) . '@example.com',
                 'email_verified_at' => now(),
-                'is_active' => 1,
+                'is_active' => $is_active,
                 'is_delete' => 0,
-                'group_role' => 'Editor',
+                'group_role' => $groupRole,
                 'last_login_at' => now(),
                 'last_login_ip' => '192.168.1.1',
                 'password' => Hash::make('password'),

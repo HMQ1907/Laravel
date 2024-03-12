@@ -10,7 +10,7 @@ class UserController extends Controller
     //
     public function index()
     {
-        $users = User::all()->where('is_delete', 0);
+        $users = User::where('is_delete', 0)->paginate(20);
         return view('users.index', ['users' => $users]);
     }
 
@@ -21,7 +21,7 @@ class UserController extends Controller
         $user_group_role = $request->input('user_group_role');
         $user_is_active = $request->input('user_is_active');
 
-        $query = User::select('name', 'email', 'group_role', 'is_active')->where('is_delete', '!=', '1');
+        $query = User::select('id','name', 'email', 'group_role', 'is_active')->where('is_delete', '!=', '1');
 
         if ($user_name) {
             $query->where('name', 'like', "%$user_name%");
@@ -36,9 +36,21 @@ class UserController extends Controller
             $query->where('is_active', $user_is_active);
         }
 
-        $users = $query->get();
+        $users = $query->paginate(20);
 
-        return response()->json(['users' => $users]);
+        $paginationHtml = $users->links()->toHtml();
+
+        return response()->json(['users' => $users, 'pagination' => $paginationHtml]);
+
+    }
+
+    public function getUserById($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'Không tỉm thấy user'], 404);
+        }
+        return response()->json($user);
     }
     public function create(UserFormRequest $request)
     {
