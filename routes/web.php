@@ -26,7 +26,6 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', [UserController::class, 'index'])->name('user.index');
         Route::get('/{id}', [UserController::class, 'getUserById'])->name('user.detail');
-        Route::match(['get', 'post'], '/search', [UserController::class, 'search'])->name('user.search');
         Route::post('/create', [UserController::class, 'create'])->name('user.create');
         Route::put('/{id}', [UserController::class, 'update'])->name('user.update');
         Route::delete('/{id}', [UserController::class, 'delete'])->name('user.delete');

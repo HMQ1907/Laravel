@@ -1,60 +1,41 @@
 $(document).ready(function () {
-    $("#search-user").click(function (e) {
-        e.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    const user_name_url = urlParams.get('user_name');
 
+    $('#user_name').val(user_name_url);
+
+    $('#search-user').click();
+
+    $("#search-user").click(function (e) {
+        e.preventDefault(); 
+    
         let user_name = $("#user_name").val();
         let user_email = $("#user_email").val();
         let user_group_role = $("#user_group_role").val();
         let user_is_active = $("#user_is_active").val();
 
+        let urlWithParams = `${search_url}?user_name=${user_name}&user_email=${user_email}&user_group_role=${user_group_role}&user_is_active=${user_is_active}`;
+        let newUrl = window.location.pathname + '?' + urlWithParams.split('?')[1];
+        history.pushState(null, null, newUrl);
         $.ajax({
-            url: search_url,
-            method: "POST",
-            data: {
-                user_name: user_name,
-                user_email: user_email,
-                user_group_role: user_group_role,
-                user_is_active: user_is_active,
-            },
+            url: urlWithParams, 
+            method: "GET",
             success: function (response) {
-                if(response.users.data.length > 0) {
-                $("#user-table-body").empty();
-                $("#paginate_all").empty();
-                $.each(response.users.data, function (index, user) {
-                    $("#user-table-body").append(
-                        "<tr>" +
-                            '<th scope="row">' +
-                            (index + 1) +
-                            "</th>" +
-                            "<td class='user_name'>" +
-                            user.name +
-                            "</td>" +
-                            "<td>" +
-                            user.email +
-                            "</td>" +
-                            "<td>" +
-                            user.group_role +
-                            "</td>" +
-                            "<td>" +
-                            (user.is_active == 1
-                                ? '<span data-active="1" class="text-success"> Đang hoạt động</span>'
-                                : '<span data-active="0" class="text-danger"> Tạm khóa</span>') +
-                            "</td>" +
-                            '<td style="gap: 5px;" class="d-flex flex-row">' +
-                            '<i id="edit_user_' + user.id + '" style="color: blue;cursor:pointer" class="fa fa-pencil edit_user" aria-hidden="true"></i>' +
-                            '<i id="remove_user_'+user.id + '"style="color: red;cursor:pointer"  class="fa fa-trash remove_user" aria-hidden="true"></i>' +
-                            '<i id="block_user_'+user.id + '" style="color: black;cursor:pointer" class="fa fa-user-times block_user" aria-hidden="true"></i>' +
-                            "</td>" +
-                            "</tr>"
-                    );
-                });
-                $("#pagination-links").html(response.pagination);
-                }else{
-                    $("#user-table-body").text('Không có dữ liệu');
+                console.log(response);
+                if (response.html) {
+                    $("#table-user-info").html(response.html);
+                    $("#pagination-links").html(response.pagination);
+                } else {
+                    $("#user-table-body").html('<tr><td colspan="6">Không có dữ liệu</td></tr>');
+                    $("#pagination-links").html('');
                 }
             },
         });
+       
     });
+    
+    
+    
     let isCreateMode = true;
 
     $("#addUserBtn").click(function () {

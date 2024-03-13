@@ -133,7 +133,7 @@
     <link href="
     https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.min.css" rel="stylesheet">
     <script>
-        let search_url = "{{ route('user.search') }}";
+        let search_url = "{{ route('user.index') }}";
         let create_url = "{{ route('user.create') }}";
         let detail_user_url = "{{ route('user.detail', ['id' => ':id']) }}";
         let edit_user_url = "{{ route('user.update', ['id' => ':id']) }}";
