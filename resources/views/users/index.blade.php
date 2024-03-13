@@ -52,51 +52,8 @@
                 <button class="btn btn-danger">Xóa tìm</button>
             </div>
         </div>
-
-        <table class="table">
-            <thead>
-                <tr class="bg-danger text-light">
-                    <th scope="col">#</th>
-                    <th scope="col">Họ tên</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Nhóm</th>
-                    <th scope="col">Trạng thái</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody id="user-table-body">
-                @php
-                    $index = 0;
-                @endphp
-                @foreach ($users as $user)
-                    <tr>
-                        <th scope="row">{{ ++$index }}</th>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->group_role }}</td>
-                        <td>
-                            @if ($user->is_active == 1)
-                                <span class="text-success"> Đang hoạt động</span>
-                            @else
-                                <span class="text-danger"> Tạm khóa</span>
-                            @endif
-                        </td>
-                        <td style="gap: 5px;" class="d-flex flex-row">
-                            <i id="edit_user_{{ $user->id }}" style="color: blue;cursor:pointer" class="fa fa-pencil edit_user" aria-hidden="true"></>
-                            <i style="color: red;cursor:pointer" class="fa fa-trash remove_user" aria-hidden="true"></i>
-                            <i style="color: black;cursor:pointer" class="fa fa-user-times block_user"
-                                aria-hidden="true"></i>
-                        </td>
-                    </tr>
-                @endforeach
-                <div id="search-results"></div>
-            </tbody>
-        </table>
-        {{-- Paginate --}}
-        <div id="paginate_all" class="d-flex justify-content-center">
-            {{ $users->links() }}
-        </div>
-        <div id="pagination-links"></div>
+    {{-- Table info users --}}
+    @include('users.table')
     </div>
     <!-- Modal -->
     <div class="modal fade" id="addEditUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -111,7 +68,7 @@
                 </div>
                 <div class="modal-body">
                     {{-- Start Form --}}
-                    <form id="userForm" >
+                    <form id="userForm">
                         @csrf
                         <div class="form-group">
                             <label for="name">Tên</label>
@@ -155,7 +112,11 @@
                         <div id="alert_error" class="text-danger" role="alert">
                         </div>
                         <div class="modal-footer">
-                            <button  id="create_edit_user" type="button" class="btn btn-primary"></button>
+                            <button class="btn btn-danger" type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                                Hủy
+                            </button>
+                            <button id="create_edit_user" type="button" class="btn btn-primary"></button>
                     </form>
                 </div>
             </div>
@@ -166,9 +127,17 @@
 
 @push('head')
     <script src="{{ asset('js/handle_users.js') }}"></script>
+    <script src="
+            https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.all.min.js
+            "></script>
+    <link href="
+    https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.min.css" rel="stylesheet">
     <script>
         let search_url = "{{ route('user.search') }}";
         let create_url = "{{ route('user.create') }}";
-        let detail_url_template = "{{ route('user.detail', ['id' => ':id']) }}";
+        let detail_user_url = "{{ route('user.detail', ['id' => ':id']) }}";
+        let edit_user_url = "{{ route('user.update', ['id' => ':id']) }}";
+        let delete_user_url = "{{ route('user.delete', ['id' => ':id']) }}";
+        let block_user_url = "{{ route('user.block', ['id' => ':id']) }}";
     </script>
 @endpush
