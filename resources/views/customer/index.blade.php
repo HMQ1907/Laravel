@@ -30,14 +30,14 @@
                     <span class="input-group-text mr-1" id="basic-addon1"><i class="fa fa-user-plus"
                             aria-hidden="true"></i></span>
                 </div>
-                <button id="addUserBtn" class="btn btn-primary"> Thêm mới </button>
+                <button id="addCustomerBtn" class="btn btn-primary">Thêm mới</button>
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text mr-1" id="basic-addon1"><i class="fa fa-search"
                             aria-hidden="true"></i></span>
                 </div>
-                <button type="button" id="search-user" class="btn btn-success">Tìm kiếm</button>
+                <button type="button" id="search-customer" class="btn btn-success">Tìm kiếm</button>
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -50,20 +50,72 @@
         {{-- Start Table --}}
         @include('customer.table')
     </div>
+
+    <div class="modal fade" id="addCustomerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_form"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{-- Start Form --}}
+                    <form id="cusForm">
+                        @csrf
+                        <div class="form-group">
+                            <label for="name">Tên</label>
+                            <input type="text" id="name" name="name" class="form-control"
+                                aria-describedby="emailHelp" placeholder="Customer name">
+                        </div>
+                        <div class="form-group">
+                            <label for="Email">Email</label>
+                            <input type="text" name="email" id="email" class="form-control"
+                                aria-describedby="emailHelp" placeholder="Customer email">
+                        </div>
+                        <div class="form-group">
+                            <label for="tel-num">Điện thoại</label>
+                            <input name="tel-num" type="text" class="form-control" id="tel-num"
+                                placeholder="Phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Địa chỉ</label>
+                            <input type="text" class="form-control" id="address" name="address"
+                                placeholder="Customer address">
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-4">Trạng thái</div>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                    <input name="is_active" checked class="form-check-input" type="checkbox"
+                                        id="is_active">
+                                    <label class="form-check-label" for="gridCheck1">
+                                        Hoạt động
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="alert_error" class="text-danger" role="alert">
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                                Hủy
+                            </button>
+                            <button id="create_customer" type="button" class="btn btn-primary">Thêm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('head')
     <script src="{{ asset('js/handle_customers.js') }}"></script>
-    <script src="
-                https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.all.min.js
-                "></script>
-    <link href="
-    https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.min.css" rel="stylesheet">
     <script>
-        // let search_url = "{{ route('user.search') }}";
-        // let create_url = "{{ route('user.create') }}";
-        // let detail_user_url = "{{ route('user.detail', ['id' => ':id']) }}";
-        // let edit_user_url = "{{ route('user.update', ['id' => ':id']) }}";
-        // let delete_user_url = "{{ route('user.delete', ['id' => ':id']) }}";
-        // let block_user_url = "{{ route('user.block', ['id' => ':id']) }}";
+        let search_cus_url = "{{ route('customer.index') }}";
+        let create_cus_url = "{{ route('customer.create') }}";
+        let update_cus_url = "{{ route('customer.update', ['id' => ':id']) }}";
     </script>
 @endpush

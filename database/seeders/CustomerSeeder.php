@@ -13,7 +13,7 @@ class CustomerSeeder extends Seeder
     public function run(): void
     {
         //
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 21; $i <= 120; $i++) {
             Customer::create([
                 'customer_name' => 'Customer ' . $i,
                 'email' => 'customer' . $i . '@example.com',

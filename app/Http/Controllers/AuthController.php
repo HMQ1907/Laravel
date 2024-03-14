@@ -11,47 +11,36 @@ class AuthController extends Controller
 {
     //
     public function index()
-    {   
+    {
         return view('auth.login');
     }
 
     public function login(LoginFormRequest $request)
     {
-        $credentials = $request->only('email','password');
-        if(auth()->attempt($credentials)){
-            $user = Auth::user();
-            if($user->is_active != 1){
-                Auth::logout();
-                return redirect()->back()->with('error','Tài khoản không hoạt động');
-            }
 
-            if($user->is_delete!= 0){
+        $remember = $request->has('remember') ? true : false;
+
+        if ((Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember))) {
+            $user = Auth::user();
+            if ($user->is_active != 1 || $user->is_delete != 0) {
                 Auth::logout();
-                return redirect()->back()->with('error','Tài khoản đã bị xóa');
+                return redirect()->back()->with('error', 'Vui lòng đăng nhập lại');
             }
 
             $user->last_login_at = now();
             $user->last_login_ip = $request->ip();
             $user->save();
-            session()->put('user_id', $user->id);
 
-            if($request->filled('remember')){
-                $remember_token = Str::random(20);
-                $user->remember_token = $remember_token;
-                session()->put('remember_token', $remember_token);
-                $user->save();
-            }
             return redirect()->route('product.index');
-        }
-        else{
-            return redirect()->back()->with('error','Sai thông tin đăng nhập ');
+        } else {
+            return redirect()->back()->withInput($request->only('email', 'remember'))->with('error', 'Sai thông tin đăng nhập');
         }
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         Auth::logout();
         $request->session()->forget('remember_token');
-        $request->session()->forget('user_id');
         return redirect()->route('login');
     }
 }

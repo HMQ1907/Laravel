@@ -1,6 +1,10 @@
 <div id="table-user-info">
-    <div id="paginate_all" class="d-flex justify-content-center">
-        {{ $users->links() }}
+    @if ($users->total() != 0)
+        <div class="text-dark total_user">Hiển thị {{ $users->firstItem() }} đến {{ $users->lastItem() }} trong tổng số {{ $users->total() }}
+        </div>
+    @endif
+    <div class="pagination" id="paginate_all" class="d-flex justify-content-center">
+        {{ $users->withQueryString()->links() }}
     </div>
     <table class="table">
         <thead>
@@ -19,7 +23,7 @@
             @endphp
             @foreach ($users as $user)
                 <tr>
-                    <th scope="row">{{ ++$index }}</th>
+                    <th scope="row">{{ $user->id }}</th>
                     <td class="user_name">{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->group_role }}</td>
@@ -43,5 +47,7 @@
             <div id="search-results"></div>
         </tbody>
     </table>
-    <div id="pagination-links"></div>
+    <div class="pagination" id="paginate_all" class="d-flex justify-content-center">
+        {{ $users->withQueryString()->links() }}
+    </div>
 </div>

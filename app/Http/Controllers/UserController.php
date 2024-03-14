@@ -8,11 +8,9 @@ use App\Http\Requests\UserFormRequest;
 use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
-
     public function index(Request $request)
     {
         try {
-
             $query = User::select('id', 'name', 'email', 'group_role', 'is_active')->where('is_delete', 0);
 
             if ($request->filled('user_name')) {
@@ -29,20 +27,20 @@ class UserController extends Controller
             }
 
             $users = $query->paginate(20);
-    
+
             if ($request->ajax()) {
                 if ($users->isEmpty()) {
                     return response()->json(['error' => 'Không tìm thấy người dùng phù hợp.']);
                 }
                 $view = view('users.table', ['users' => $users])->render();
-                return response()->json(['html' => $view]);
+                $paginationLinks = $users->links()->toHtml();
+                return response()->json(['html' => $view, 'pagination_links' => $paginationLinks]);
             }
             return view('users.index', ['users' => $users]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    
 
     public function getUserById($id)
     {
@@ -71,13 +69,17 @@ class UserController extends Controller
                 'email.unique' => 'Email này đã được đăng kí',
             ];
 
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users,email,' . $userId,
-                'password' => 'nullable|string|min:6',
-                'user_group_role' => 'required|string|max:255',
-                'is_active' => 'required|boolean',
-            ],$messages);
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'name' => 'required|string|max:255',
+                    'email' => 'required|string|email|max:255|unique:users,email,' . $userId,
+                    'password' => 'nullable|string|min:6',
+                    'user_group_role' => 'required|string|max:255',
+                    'is_active' => 'required|boolean',
+                ],
+                $messages,
+            );
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->first()], 400);
@@ -114,7 +116,8 @@ class UserController extends Controller
         }
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         try {
             $user = User::find($id);
             if (!$user) {
@@ -128,7 +131,8 @@ class UserController extends Controller
         }
     }
 
-    public function block($id){
+    public function block($id)
+    {
         try {
             $user = User::find($id);
             if (!$user) {
@@ -141,6 +145,4 @@ class UserController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-
 }

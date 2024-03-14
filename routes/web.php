@@ -20,9 +20,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'index']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/', [AuthController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', [UserController::class, 'index'])->name('user.index');
         Route::get('/{id}', [UserController::class, 'getUserById'])->name('user.detail');
@@ -31,8 +33,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [UserController::class, 'delete'])->name('user.delete');
         Route::patch('/{id}', [UserController::class, 'block'])->name('user.block');
     });
+
     Route::group(['prefix' => 'customer'], function () {
         Route::get('/', [CustomerController::class, 'index'])->name('customer.index');
+        Route::post('/create', [CustomerController::class, 'create'])->name('customer.create');
+        Route::put('/{id}', [CustomerController::class, 'update'])->name('customer.update');
     });
 
     Route::get('product', [ProductController::class, 'index'])->name('product.index');

@@ -127,11 +127,6 @@
 
 @push('head')
     <script src="{{ asset('js/handle_users.js') }}"></script>
-    <script src="
-            https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.all.min.js
-            "></script>
-    <link href="
-    https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.min.css" rel="stylesheet">
     <script>
         let search_url = "{{ route('user.index') }}";
         let create_url = "{{ route('user.create') }}";

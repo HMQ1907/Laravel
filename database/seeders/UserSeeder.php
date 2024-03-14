@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 25; $i < 120; $i++) {
             $groupRole = rand(0, 1) ? 'editor' : 'reviewer'; 
             $is_active = rand(0, 1) ? '0' : '1';
             

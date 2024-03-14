@@ -6,9 +6,40 @@ $(document).ready(function () {
 
     $('#search-user').click();
 
+    $(document).on('click', '.page-link', function(e) {
+        e.preventDefault();
+    
+        let nextPageUrl = $(this).attr('href');
+    
+        $.ajax({
+            url: nextPageUrl,
+            method: "GET",
+            success: function(response) {
+                if (response.html) {
+                    $("#table-user-info").html(response.html);
+                    $("#pagination-links").html(response.pagination_links);
+                } else {
+                    $("#user-table-body").html('<tr><td colspan="6">Không có dữ liệu</td></tr>');
+                    $("#pagination-links").html('');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    
+    $("#user_name, #user_email, #user_group_role, #user_is_active").keypress(function(event) {
+        if (event.which == 13) { 
+            event.preventDefault(); 
+            $("#search-user").click();
+        }
+    });
+
+    
     $("#search-user").click(function (e) {
         e.preventDefault(); 
-    
         let user_name = $("#user_name").val();
         let user_email = $("#user_email").val();
         let user_group_role = $("#user_group_role").val();
@@ -21,20 +52,20 @@ $(document).ready(function () {
             url: urlWithParams, 
             method: "GET",
             success: function (response) {
-                console.log(response);
                 if (response.html) {
                     $("#table-user-info").html(response.html);
-                    $("#pagination-links").html(response.pagination);
+                if(response.pagination_links){
+                    $("#pagination-links").html(response.pagination_links);
+                }
                 } else {
                     $("#user-table-body").html('<tr><td colspan="6">Không có dữ liệu</td></tr>');
-                    $("#pagination-links").html('');
+                    $(".pagination").html('');
+                    $(".total_user").html('');
                 }
             },
         });
        
     });
-    
-    
     
     let isCreateMode = true;
 
