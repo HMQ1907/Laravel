@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
+use App\Exports\CustomersExport;
+use Maatwebsite\Excel\Facades\Excel;
 class CustomerController extends Controller
 {
     public function index(Request $request)
@@ -60,6 +62,44 @@ class CustomerController extends Controller
 
     public function update(Request $request)
     {
-        dd($request->all());
+        try {
+            $cusId = $request->input('customer_id');
+            $customer = Customer::find($request->input('customer_id'));
+            if (!$customer) {
+                return response()->json(['error' => 'Người dùng không tồn tại'], 404);
+            }
+            $messages = [
+                'email.unique' => 'Email này đã được đăng kí',
+                'customer_tel.regex' => 'Số điện thoại không hợp lệ',
+            ];
+
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'customer_name' => 'required|string|max:255',
+                    'customer_email' => 'required|string|email|max:255|unique:customers,email,' . $cusId . ',customer_id',
+                    'customer_address' => 'required|string|max:255',
+                    'customer_tel' => 'required|string|regex:/^\d{10}$/',
+                ],
+                $messages,
+            );
+
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], 400);
+            }
+            $customer->customer_name = $request->input('customer_name');
+            $customer->email = $request->input('customer_email');
+            $customer->tel_num = $request->input('customer_tel');
+            $customer->address = $request->input('customer_address');
+            $customer->save();
+            return response()->json(['message' => 'Cập nhật thành công khách hàng']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function export()
+    {
+        return Excel::download(new CustomersExport, 'customers.xlsx');
     }
 }

@@ -169,8 +169,8 @@ $(document).ready(function (){
             updatedData[fieldName] = fieldValue;
         });
         let cus_id = $(this).attr('data-customer-id');
-        console.log(updatedData,cus_id);
-        
+        updatedData['customer_id'] = cus_id;
+        console.log(updatedData);;
         $.ajax({
             type: 'PUT',
             url: update_cus_url.replace(":id", cus_id),
@@ -185,11 +185,11 @@ $(document).ready(function (){
                     }
                 });
             },
-            error: function(xhr, status, error) {
+            error: function(response) {
                 Swal.fire({
                     icon: "error",
                     title: "Lỗi",
-                    text: "Đã xảy ra lỗi khi xóa người dùng."
+                    text: response.responseJSON.error
                 });
             }
         });
