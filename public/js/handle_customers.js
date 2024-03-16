@@ -1,68 +1,71 @@
-$(document).ready(function (){
-
+$(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const cus_name_url = urlParams.get('customer_name');
+    const cus_name_url = urlParams.get("customer_name");
 
-    $('#customer_name').val(cus_name_url);
+    $("#customer_name").val(cus_name_url);
 
-    $('#search-customer').click();
+    $("#search-customer").click();
 
-    $(document).on('click', '.page-link', function(e) {
+    $(document).on("click", ".page-link", function (e) {
         e.preventDefault();
-    
-        let nextPageUrl = $(this).attr('href');
-    
+
+        let nextPageUrl = $(this).attr("href");
+
         $.ajax({
             url: nextPageUrl,
             method: "GET",
-            success: function(response) {
+            success: function (response) {
                 if (response.html) {
                     $("#table-cus-info").html(response.html);
                     $("#pagination-links").html(response.pagination_links);
                 } else {
-                    $("#cus-table-body").html('<tr><td colspan="6">Không có dữ liệu</td></tr>');
-                    $("#pagination-links").html('');
+                    $("#cus-table-body").html(
+                        '<tr><td colspan="6">Không có dữ liệu</td></tr>'
+                    );
+                    $("#pagination-links").html("");
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error(error);
-            }
+            },
         });
     });
 
-    $("#customer_name, #customer_email, #customer_status, #customer_address").keypress(function(event) {
-        if (event.which == 13) { 
-            event.preventDefault(); 
+    $("#customer_name, #customer_email, #customer_status, #customer_address").keypress(function (event) {
+        if (event.which == 13) {
+            event.preventDefault();
             $("#search-customer").click();
         }
     });
 
     $("#search-customer").click(function (e) {
-        e.preventDefault(); 
+        e.preventDefault();
         let customer_name = $("#customer_name").val();
         let customer_email = $("#customer_email").val();
         let customer_status = $("#customer_status").val();
         let customer_address = $("#customer_address").val();
 
         let urlWithParams = `${search_cus_url}?customer_name=${customer_name}&customer_email=${customer_email}&customer_status=${customer_status}&customer_address=${customer_address}`;
-        let newUrl = window.location.pathname + '?' + urlWithParams.split('?')[1];
+        let newUrl =
+            window.location.pathname + "?" + urlWithParams.split("?")[1];
         history.pushState(null, null, newUrl);
         $.ajax({
-            url: urlWithParams, 
+            url: urlWithParams,
             method: "GET",
             success: function (response) {
                 if (response.html) {
                     $("#table-cus-info").html(response.html);
-                if(response.pagination_links){
-                    $("#pagination-links").html(response.pagination_links);
-                }
+                    if (response.pagination_links) {
+                        $("#pagination-links").html(response.pagination_links);
+                    }
                 } else {
-                    $("#customer-table-body").html('<tr><td colspan="6">Không có dữ liệu</td></tr>');
-                    $(".pagination").html('');
+                    $("#customer-table-body").html(
+                        '<tr><td colspan="6">Không có dữ liệu</td></tr>'
+                    );
+                    $(".pagination").html("");
                 }
             },
         });
-       
     });
 
     $("#addCustomerBtn").click(function () {
@@ -88,7 +91,7 @@ $(document).ready(function (){
         if (!email) {
             error_messages.push("Vui lòng nhập email khách hàng");
         }
-        if(!tel_num){
+        if (!tel_num) {
             error_messages.push(" Vui lòng nhập số điện thoại khách hàng");
         }
         if (tel_num && !validatePhoneNumber(tel_num)) {
@@ -105,98 +108,165 @@ $(document).ready(function (){
             $("#alert_error").html(error_messages.join("<br>"));
             return false;
         }
-            $.ajax({
-                type: "POST",
-                url: create_cus_url,
-                data: {
-                    name: name,
-                    email: email,
-                    tel_num: tel_num,
-                    address: address,
-                    is_active: is_active,
-                },
-                success: function (response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Thành công',
-                        text: response.message,
-                        willClose:() =>{
-                            window.location.reload();
-                        }
-                    });
-                 },error: function (response) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Thất bại',
-                        text: response.responseJSON.message,
-                    });
-                }
-            });
+        $.ajax({
+            type: "POST",
+            url: create_cus_url,
+            data: {
+                name: name,
+                email: email,
+                tel_num: tel_num,
+                address: address,
+                is_active: is_active,
+            },
+            success: function (response) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Thành công",
+                    text: response.message,
+                    willClose: () => {
+                        window.location.reload();
+                    },
+                });
+            },
+            error: function (response) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Thất bại",
+                    text: response.responseJSON.message,
+                });
+            },
+        });
     });
 
-    $(document).on('click', '.edit-customer', function(e){
-        let row = $(this).closest('tr');
-        if (row.hasClass('editing')) {
-            $(this).addClass('fa-pencil');
-            row.find('.update-customer-btn').hide();
-            $(this).removeClass('fa-times-circle');
-            row.find('td:not(:last-child)').each(function() {
-                let fieldValue = $(this).find('input').val();
+    $(document).on("click", ".edit-customer", function (e) {
+        let row = $(this).closest("tr");
+        if (row.hasClass("editing")) {
+            $(this).addClass("fa-pencil");
+            row.find(".update-customer-btn").hide();
+            $(this).removeClass("fa-times-circle");
+            row.find("td:not(:last-child)").each(function () {
+                let fieldValue = $(this).find("input").val();
                 $(this).text(fieldValue);
             });
-    
-            row.removeClass('editing');
+
+            row.removeClass("editing");
         } else {
-            $(this).removeClass('fa-pencil');
-            $(this).addClass('fa-times-circle');
-            row.find('td:not(:last-child)').each(function() {
-                let fieldName = $(this).attr('class');
+            $(this).removeClass("fa-pencil");
+            $(this).addClass("fa-times-circle");
+            row.find("td:not(:last-child)").each(function () {
+                let fieldName = $(this).attr("class");
                 let fieldValue = $(this).text();
-                $(this).html('<input type="text" class="form-control" name="' + fieldName + '" value="' + fieldValue + '">');
+                $(this).html(
+                    '<input type="text" class="form-control" name="' +
+                        fieldName +
+                        '" value="' +
+                        fieldValue +
+                        '">'
+                );
             });
-            row.find('.update-customer-btn').show();
-            row.addClass('editing');
+            row.find(".update-customer-btn").show();
+            row.addClass("editing");
         }
     });
 
-    $(document).on('click', '.update-customer-btn', function() {
-        let row = $(this).closest('tr');
+    $(document).on("click", ".update-customer-btn", function () {
+        let row = $(this).closest("tr");
         let updatedData = {};
-        
-        row.find('td:not(:last-child) input').each(function() {
-            let fieldName = $(this).attr('name');
+
+        row.find("td:not(:last-child) input").each(function () {
+            let fieldName = $(this).attr("name");
             let fieldValue = $(this).val();
             updatedData[fieldName] = fieldValue;
         });
-        let cus_id = $(this).attr('data-customer-id');
-        updatedData['customer_id'] = cus_id;
-        console.log(updatedData);;
+        let cus_id = $(this).attr("data-customer-id");
+        updatedData["customer_id"] = cus_id;
+        console.log(updatedData);
         $.ajax({
-            type: 'PUT',
+            type: "PUT",
             url: update_cus_url.replace(":id", cus_id),
             data: updatedData,
-            success: function(response) {
+            success: function (response) {
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công',
+                    icon: "success",
+                    title: "Thành công",
                     text: response.message,
-                    willClose:() =>{
+                    willClose: () => {
                         window.location.reload();
-                    }
+                    },
                 });
             },
-            error: function(response) {
+            error: function (response) {
                 Swal.fire({
                     icon: "error",
                     title: "Lỗi",
-                    text: response.responseJSON.error
+                    text: response.responseJSON.error,
                 });
-            }
+            },
         });
+    });
+
+    $(document).on("click", "#exportCus", function () {
+
+        let cus_name = $("#customer_name").val();
+        let cus_email = $("#customer_email").val();
+        let cus_status = $("#customer_status").val();
+        let cus_address = $("#customer_address").val();
+
+        let urlWithParams = `${export_cus_url}?customer_name=${cus_name}&customer_email=${cus_email}&customer_status=${cus_status}&customer_address=${cus_address}`;
+        window.location = urlWithParams
+
+    });
+    
+    $('#excelFile').change(function () {
+        var fileName = $(this).val().split('\\').pop();
+        $(this).next('.custom-file-label').html(fileName);
+    });
+
+    $("#importBtn").click(function(e) {
+        e.preventDefault();
+        let fileInput = document.getElementById('excelFile');
+        let file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Chưa chọn file');
+            return;
+        }
+    
+        let reader = new FileReader();
+        reader.onload = function(e) {    
+            $.ajax({
+                type: "POST",
+                url: import_cus_url,
+                data: new FormData($("#importCusForm")[0]),
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Thành công",
+                        text: response.success,
+                        willClose: () => {
+                            window.location.reload();
+                        },
+                    });
+                },
+                error: function (response) {
+                    console.log(response);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Lỗi",
+                        html: response.responseJSON.error.replace(/\n/g, "<br>"),
+                    });
+                },
+            });
+        };
+    
+        reader.readAsArrayBuffer(file); 
     });
     
     
 });
+
 function validateEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }

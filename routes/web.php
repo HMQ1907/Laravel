@@ -38,8 +38,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [CustomerController::class, 'index'])->name('customer.index');
         Route::post('/create', [CustomerController::class, 'create'])->name('customer.create');
         Route::put('/{id}', [CustomerController::class, 'update'])->name('customer.update');
-        Route::get('/export-customers', [CustomerController::class, 'export'])->name('export.customers');
-
+        Route::get('/export-customers', [CustomerController::class, 'export'])->name('customer.export');
+        Route::post('/import-customers', [CustomerController::class, 'import'])->name('customer.import');
     });
 
     Route::get('product', [ProductController::class, 'index'])->name('product.index');

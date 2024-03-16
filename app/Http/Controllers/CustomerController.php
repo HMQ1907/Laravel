@@ -8,26 +8,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Exports\CustomersExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Excel as ExcelType;
+use App\Imports\CustomersImport;
 class CustomerController extends Controller
 {
+    protected function buildQuery(Request $request)
+    {
+        $query = Customer::select('customer_id', 'customer_name', 'email', 'tel_num', 'address', 'is_active');
+
+        if ($request->filled('customer_name')) {
+            $query->where('customer_name', 'like', '%' . $request->input('customer_name') . '%');
+        }
+        if ($request->filled('customer_email')) {
+            $query->where('email', 'like', '%' . $request->input('customer_email') . '%');
+        }
+        if ($request->filled('customer_status')) {
+            $query->where('is_active', $request->input('customer_status'));
+        }
+        if ($request->filled('customer_address')) {
+            $query->where('address', 'like', '%' . $request->input('customer_address') . '%');
+        }
+
+
+        return $query;
+    }
     public function index(Request $request)
     {
         try {
-            $query = Customer::select('customer_id', 'customer_name', 'email', 'tel_num', 'address', 'is_active');
-
-            if ($request->filled('customer_name')) {
-                $query->where('customer_name', 'like', '%' . $request->input('customer_name') . '%');
-            }
-            if ($request->filled('customer_email')) {
-                $query->where('email', 'like', '%' . $request->input('customer_email') . '%');
-            }
-            if ($request->filled('customer_status')) {
-                $query->where('is_active', $request->input('customer_status'));
-            }
-            if ($request->filled('customer_address')) {
-                $query->where('address', 'like', '%' . $request->input('customer_address') . '%');
-            }
-
+            $query = $this->buildQuery($request);
             $customers = $query->paginate(20);
 
             if ($request->ajax()) {
@@ -38,6 +46,7 @@ class CustomerController extends Controller
                 $paginationLinks = $customers->links()->toHtml();
                 return response()->json(['html' => $view, 'pagination_links' => $paginationLinks]);
             }
+
             return view('customer.index', ['customers' => $customers]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -98,8 +107,47 @@ class CustomerController extends Controller
         }
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        return Excel::download(new CustomersExport, 'customers.xlsx');
+        try {
+            $query = $this->buildQuery($request);
+            $searchParams = $request->only(['customer_name', 'customer_email', 'customer_status', 'customer_address']);
+            $hasSearchParams = collect($searchParams)->filter()->isNotEmpty();
+            
+            if ($hasSearchParams) {
+                $customers = $query->get();
+            } else {
+                $customers = $query->paginate(20)->items();
+            }
+    
+            return Excel::download(new CustomersExport($customers), 'customers.xlsx');
+        } catch(\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
+    
+
+    public function import(Request $request)
+    {
+        try {
+            $file_excel = $request->file('excelFile'); 
+    
+            Excel::import(new CustomersImport, $file_excel, ExcelType::XLSX, null, [
+                'validationMessages' => (new CustomersImport)->customValidationMessages()
+            ]);           
+    
+            return response()->json(['success' => 'Import thành công'], 200);
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $errors = $e->failures(); 
+            $errorMessage = 'Lỗi trong quá trình import:';
+            foreach ($errors as $error) {
+                $errorMessage .= "<br>". $error->errors()[0];
+            }
+    
+            return response()->json(['error' => $errorMessage], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+    
 }

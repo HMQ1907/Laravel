@@ -47,6 +47,30 @@
                 <button class="btn btn-danger">Xóa tìm</button>
             </div>
         </div>
+        <div class="d-flex flex-row justify-content-start">
+            <div style="margin-right: 200px;" class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text mr-1" id="basic-addon1"><i class="fa fa-download"
+                            aria-hidden="true"></i></span>
+                </div>
+                <button id="exportCus" class="btn btn-warning">Export excel</button>
+            </div>
+        </div>
+        <form id="importCusForm" enctype="multipart/form-data">
+            
+            @csrf           
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text mr-1" id="basic-addon1"><i class="fa fa-upload" aria-hidden="true"></i></span>
+                </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="excelFile" name="excelFile" aria-describedby="inputGroupFileAddon01">
+                    <label class="custom-file-label" for="excelFile">Chọn file Excel</label>
+                </div>
+            </div>
+            <button id="importBtn" type="button" class="btn btn-info">Import excel</button>
+        </form>
+        
         {{-- Start Table --}}
         @include('customer.table')
     </div>
@@ -117,5 +141,7 @@
         let search_cus_url = "{{ route('customer.index') }}";
         let create_cus_url = "{{ route('customer.create') }}";
         let update_cus_url = "{{ route('customer.update', ['id' => ':id']) }}";
+        let export_cus_url = "{{ route('customer.export') }}";
+        let import_cus_url = "{{ route('customer.import') }}";
     </script>
 @endpush

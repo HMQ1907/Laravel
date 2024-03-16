@@ -159,7 +159,6 @@ $(document).ready(function () {
                 "Mật khẩu và xác nhận mật khẩu không chính xác."
             );
         }
-        console.log(isCreateMode);
         if (!name) {
             error_messages.push("Vui lòng nhập tên người dùng.");
         }
@@ -292,7 +291,7 @@ $(document).ready(function () {
         let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
         return passwordRegex.test(password);
     }
-    function validateEmail(email) {
+    function validateEmail(email) {     
         let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
