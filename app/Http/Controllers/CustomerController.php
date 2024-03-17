@@ -78,7 +78,7 @@ class CustomerController extends Controller
                 return response()->json(['error' => 'Người dùng không tồn tại'], 404);
             }
             $messages = [
-                'email.unique' => 'Email này đã được đăng kí',
+                'customer_email.unique' => 'Email này đã được đăng kí',
                 'customer_tel.regex' => 'Số điện thoại không hợp lệ',
             ];
 
