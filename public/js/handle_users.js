@@ -29,7 +29,6 @@ $(document).ready(function () {
         });
     });
 
-    
     $("#user_name, #user_email, #user_group_role, #user_is_active").keypress(function(event) {
         if (event.which == 13) { 
             event.preventDefault(); 
@@ -37,7 +36,6 @@ $(document).ready(function () {
         }
     });
 
-    
     $("#search-user").click(function (e) {
         e.preventDefault(); 
         let user_name = $("#user_name").val();
@@ -291,6 +289,7 @@ $(document).ready(function () {
         let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
         return passwordRegex.test(password);
     }
+    
     function validateEmail(email) {     
         let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);

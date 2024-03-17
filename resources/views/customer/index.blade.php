@@ -57,20 +57,20 @@
             </div>
         </div>
         <form id="importCusForm" enctype="multipart/form-data">
-            
-            @csrf           
+            @csrf
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text mr-1" id="basic-addon1"><i class="fa fa-upload" aria-hidden="true"></i></span>
                 </div>
                 <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="excelFile" name="excelFile" aria-describedby="inputGroupFileAddon01">
-                    <label class="custom-file-label" for="excelFile">Chọn file Excel</label>
+                    <input accept=".xls,.xlsx" type="file" class="" id="excelFile" name="excelFile" aria-describedby="inputGroupFileAddon01">
+                    <label style="width: 225px;" class="custom-file-label" for="excelFile">Chọn file Excel</label>
                 </div>
+                <button style="margin-right:720px;" id="importBtn" type="button" class="btn btn-info">Import excel</button>
             </div>
-            <button id="importBtn" type="button" class="btn btn-info">Import excel</button>
+            
         </form>
-        
+
         {{-- Start Table --}}
         @include('customer.table')
     </div>
