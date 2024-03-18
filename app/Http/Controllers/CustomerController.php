@@ -29,7 +29,6 @@ class CustomerController extends Controller
             $query->where('address', 'like', '%' . $request->input('customer_address') . '%');
         }
 
-
         return $query;
     }
     public function index(Request $request)
@@ -107,47 +106,59 @@ class CustomerController extends Controller
         }
     }
 
+    public function delete($id)
+    {
+        try {
+            $user = Customer::find($id);
+            if (!$user) {
+                return response()->json(['error' => 'Khách hàng không tồn tại'], 404);
+            }
+            $user->delete();
+            return response()->json(['message' => 'Xóa khách hàng thành công']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function export(Request $request)
     {
         try {
             $query = $this->buildQuery($request);
             $searchParams = $request->only(['customer_name', 'customer_email', 'customer_status', 'customer_address']);
             $hasSearchParams = collect($searchParams)->filter()->isNotEmpty();
-            
+
             if ($hasSearchParams) {
                 $customers = $query->get();
             } else {
                 $customers = $query->paginate(20)->items();
             }
-    
+
             return Excel::download(new CustomersExport($customers), 'customers.xlsx');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    
 
     public function import(Request $request)
     {
         try {
-            $file_excel = $request->file('excelFile'); 
-    
-            Excel::import(new CustomersImport, $file_excel, ExcelType::XLSX, null, [
-                'validationMessages' => (new CustomersImport)->customValidationMessages()
-            ]);           
-    
+            $file_excel = $request->file('excelFile');
+
+            Excel::import(new CustomersImport(), $file_excel, ExcelType::XLSX, null, [
+                'validationMessages' => (new CustomersImport())->customValidationMessages(),
+            ]);
+
             return response()->json(['success' => 'Import thành công'], 200);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            $errors = $e->failures(); 
+            $errors = $e->failures();
             $errorMessage = 'Lỗi trong quá trình import:';
             foreach ($errors as $error) {
-                $errorMessage .= "<br>". $error->errors()[0];
+                $errorMessage .= '<br>' . $error->errors()[0];
             }
-    
+
             return response()->json(['error' => $errorMessage], 500);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    
 }

@@ -38,9 +38,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [CustomerController::class, 'index'])->name('customer.index');
         Route::post('/create', [CustomerController::class, 'create'])->name('customer.create');
         Route::put('/{id}', [CustomerController::class, 'update'])->name('customer.update');
+        Route::delete('/{id}', [CustomerController::class, 'delete'])->name('customer.delete');
         Route::get('/export-customers', [CustomerController::class, 'export'])->name('customer.export');
         Route::post('/import-customers', [CustomerController::class, 'import'])->name('customer.import');
     });
 
-    Route::get('product', [ProductController::class, 'index'])->name('product.index');
+    Route::group(['prefix'=>'product'],function () {
+        Route::get('/',[ProductController::class,'index'])->name('product.index');
+        Route::get('add',[ProductController::class,'add'])->name('product.add');
+        Route::post('create',[ProductController::class,'create'])->name('product.create');
+        Route::get('/edit/{id}',[ProductController::class,'getProduct'])->name('product.edit');
+        Route::post('update/{id}',[ProductController::class,'update'])->name('product.update');
+    });
 });

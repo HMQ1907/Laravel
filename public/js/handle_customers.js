@@ -148,7 +148,7 @@ $(document).ready(function () {
                 let fieldValue = $(this).find("input").val();
                 $(this).text(fieldValue);
             });
-
+            row.find(".delete-customer").show();
             row.removeClass("editing");
         } else {
             $(this).removeClass("fa-pencil");
@@ -165,6 +165,7 @@ $(document).ready(function () {
                 );
             });
             row.find(".update-customer-btn").show();
+            row.find(".delete-customer").hide();
             row.addClass("editing");
         }
     });
@@ -202,6 +203,44 @@ $(document).ready(function () {
                     text: response.responseJSON.error,
                 });
             },
+        });
+    });
+
+    $(document).on("click", ".delete-customer", function(e){
+        e.preventDefault();
+        let cus_id = $(this).attr('data-customer-id');
+        var cus_name = $(this).closest('tr').find('.customer_name').text();
+        Swal.fire({
+            title: "Xác nhận",
+            text: `Bạn có muốn xóa khách hàng ${cus_name} không`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Đồng ý",
+            cancelButtonText: "Hủy bỏ"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "DELETE",
+                    url: delete_cus_url.replace(":id", cus_id),
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: response.message,
+                            willClose:() =>{
+                                window.location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Lỗi",
+                            text: "Đã xảy ra lỗi khi xóa khách hàng."
+                        });
+                    }
+                });
+            }
         });
     });
 

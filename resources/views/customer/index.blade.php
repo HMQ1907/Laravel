@@ -64,9 +64,9 @@
                 </div>
                 <div class="custom-file">
                     <input accept=".xls,.xlsx" type="file" class="" id="excelFile" name="excelFile" aria-describedby="inputGroupFileAddon01">
-                    <label style="width: 225px;" class="custom-file-label" for="excelFile">Chọn file Excel</label>
+                    <label style="width: 270px;" class="custom-file-label" for="excelFile">Chọn file Excel</label>
                 </div>
-                <button style="margin-right:720px;" id="importBtn" type="button" class="btn btn-info">Import excel</button>
+                <button style="margin-right:690px;" id="importBtn" type="button" class="btn btn-info">Import excel</button>
             </div>
             
         </form>
@@ -143,5 +143,6 @@
         let update_cus_url = "{{ route('customer.update', ['id' => ':id']) }}";
         let export_cus_url = "{{ route('customer.export') }}";
         let import_cus_url = "{{ route('customer.import') }}";
+        let delete_cus_url = "{{ route('customer.delete', ['id' => ':id']) }}";
     </script>
 @endpush

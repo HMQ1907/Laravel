@@ -26,13 +26,14 @@
                 <tr>
                     <th scope="row">{{ $customer->customer_id }}</th>
                     <td class="customer_name">{{ $customer->customer_name }}</td>
-                    <td class="customer_email" >{{ $customer->email }}</td>
+                    <td class="customer_email">{{ $customer->email }}</td>
                     <td class="customer_address">{{ $customer->address }}</td>
                     <td class="customer_tel">{{ $customer->tel_num }}</td>
                     <td>
+                        <i style="cursor: pointer" class="fa fa-trash-o delete-customer mr-5" aria-hidden="true" data-customer-id={{ $customer->customer_id }}></i>
                         <i style="cursor: pointer" class="fa fa-pencil edit-customer" aria-hidden="true"></i>
-                        <button class="btn btn-primary update-customer-btn" data-customer-id={{ $customer->customer_id }}
-                            style="display: none;">Cập nhật</button>
+                        <button class="btn btn-primary update-customer-btn ml-2"
+                            data-customer-id={{ $customer->customer_id }} style="display: none;">Cập nhật</button>
                     </td>
                 </tr>
             @endforeach
