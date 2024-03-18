@@ -47,7 +47,7 @@
                         <input type="file" class="custom-file-input" id="imageUpload">
                         <label class="custom-file-label" for="imageUpload">Chọn file</label>
                     </div>
-                    <button class="btn btn-danger mt-2">Xóa file</button>
+                    <button class="btn btn-danger remove_file mt-2">Xóa file</button>
                 </div>
                 <img src="{{ isset($product) ? asset($product->product_image) : '' }}" alt="">
 

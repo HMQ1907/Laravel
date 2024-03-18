@@ -123,9 +123,23 @@ $(document).ready(function () {
         }
     })
 
-    $(document).on("mouseover",".product_name",function(e){
-        $(this).next().addClass('d-block');
-        $(this).next().removeClass('d-none');
+    $('.product_name').mouseover(function() {
+        var imageSrc = $(this).data('image-src');
+        if (imageSrc) {
+            $(this).find('.product_img').html('<img width="120px;" src="' + imageSrc + '" alt="Product Image">');
+            $(this).find('.product_img').removeClass('d-none');
+        }
+    });
+
+    $('.product_name').mouseout(function() {
+        $(this).find('.product_img').html('');
+        $(this).find('.product_img').addClass('d-none');
+    });
+
+    $('.remove_file').click(function() {
+        $('img').attr('src', '');
+        $('#imageUpload').val('');
+        $('#imageUpload').next('.custom-file-label').text('');
     });
 
     $('#imageUpload').on('change', function() {

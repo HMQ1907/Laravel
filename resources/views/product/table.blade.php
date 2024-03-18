@@ -22,7 +22,7 @@
             @foreach ($products as $product)
                 <tr>
                     <th scope="row">{{ $product->product_id }}</th>
-                    <td class="product_name">{{ $product->product_name }}
+                    <td class="product_name" data-image-src="{{ $product->product_image }}">{{ $product->product_name }}
                         <span class="text-muted product_img d-none">qwe</span>
                     </td>
                     
