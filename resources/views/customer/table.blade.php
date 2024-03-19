@@ -1,6 +1,6 @@
 <div id="table-cus-info">
     @if ($customers->total() != 0)
-        <div class="text-dark total_user">Hiển thị {{ $customers->firstItem() }} đến {{ $customers->lastItem() }} trong
+        <div class="text-dark total_customer">Hiển thị {{ $customers->firstItem() }} đến {{ $customers->lastItem() }} trong
             tổng số {{ $customers->total() }}
         </div>
     @endif

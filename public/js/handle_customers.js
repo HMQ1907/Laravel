@@ -40,6 +40,19 @@ $(document).ready(function () {
 
     $("#search-customer").click(function (e) {
         e.preventDefault();
+        searchCustomers();
+    });
+
+    $("#delete-search-customer").click(function (e) {
+        e.preventDefault();
+        $("#customer_name").val('');
+        $("#customer_email").val('');
+        $("#customer_status").val('');
+        $("#customer_address").val('');
+        searchCustomers();
+    });
+
+    function searchCustomers(){
         let customer_name = $("#customer_name").val();
         let customer_email = $("#customer_email").val();
         let customer_status = $("#customer_status").val();
@@ -63,10 +76,12 @@ $(document).ready(function () {
                         '<tr><td colspan="6">Không có dữ liệu</td></tr>'
                     );
                     $(".pagination").html("");
+                    $(".total_customer").html('');
+
                 }
             },
         });
-    });
+    }
 
     $("#addCustomerBtn").click(function () {
         $("#title_form").text("Thêm mới khách hàng");

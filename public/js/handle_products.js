@@ -23,33 +23,54 @@ $(document).ready(function () {
         });
     });
 
-    $("#search-product").click(function (e) {
-        e.preventDefault(); 
+    $("#product_name, #product_status, #min_price, #max_price").keypress(function(event) {
+        if (event.which == 13) { 
+            event.preventDefault(); 
+            $("#search-product").click();
+        }
+    });
+
+    function searchProducts() {
         let product_name = $("#product_name").val();
         let product_status = $("#product_status").val();
         let min_price = $("#min_price").val();
         let max_price = $("#max_price").val();
-
-        let urlWithParams = `${search_url}?product_name=${product_name}&product_status=${product_status}&min_price=${min_price}&max_price=${max_price}`;
+    
+        let urlWithParams = `${search_product_url}?product_name=${product_name}&product_status=${product_status}&min_price=${min_price}&max_price=${max_price}`;
         let newUrl = window.location.pathname + '?' + urlWithParams.split('?')[1];
         history.pushState(null, null, newUrl);
         $.ajax({
-            url: urlWithParams, 
+            url: urlWithParams,
             method: "GET",
-            success: function (response) {
+            success: function(response) {
                 if (response.html) {
                     $("#table-product-info").html(response.html);
-                if(response.pagination_links){
-                    $("#pagination-links").html(response.pagination_links);
-                }
+                    if (response.pagination_links) {
+                        $("#pagination-links").html(response.pagination_links);
+                    }
                 } else {
                     $("#product-table-body").html('<tr><td colspan="6">Không có dữ liệu</td></tr>');
                     $(".pagination").html('');
-                    $(".total_user").html('');
+                    $(".total_product").html('');
                 }
             },
         });
-       
+    }
+    
+    $(document).on("click", "#search-product", function(e) {
+        e.preventDefault();
+        searchProducts();
+    });
+    
+    $(document).on("click", "#delete-search", function(e) {
+        e.preventDefault();
+    
+        $("#product_name").val('');
+        $("#product_status").val('');
+        $("#min_price").val('');
+        $("#max_price").val('');
+    
+        searchProducts();
     });
 
     $(document).on("click","#create_edit_product",function(e) {
@@ -63,7 +84,6 @@ $(document).ready(function () {
         let image = $('#imageUpload').prop('files')[0];
         let formData = new FormData();
 
-
         formData.append('product_name', product_name);
         formData.append('product_desc', product_desc);
         formData.append('product_price', product_price);
@@ -72,7 +92,7 @@ $(document).ready(function () {
 
         if (product_id && product_id != 0 ){
             $.ajax({
-                url: update_url.replace(":id", product_id), 
+                url: update_product_url.replace(":id", product_id), 
                 type: 'POST',
                 data: formData,
                 contentType: false,
@@ -97,7 +117,7 @@ $(document).ready(function () {
             });
         }else{
             $.ajax({
-                url: create_url, 
+                url: create_product_url, 
                 type: 'POST',
                 data: formData,
                 contentType: false,
@@ -123,18 +143,18 @@ $(document).ready(function () {
         }
     })
 
-    $('.product_name').mouseover(function() {
-        var imageSrc = $(this).data('image-src');
+    $(document).on('mouseover','.product_name',function(){
+        let imageSrc = $(this).data('image-src');
         if (imageSrc) {
             $(this).find('.product_img').html('<img width="120px;" src="' + imageSrc + '" alt="Product Image">');
             $(this).find('.product_img').removeClass('d-none');
         }
-    });
+    })
 
-    $('.product_name').mouseout(function() {
+    $(document).on('mouseout','.product_name',function(){
         $(this).find('.product_img').html('');
         $(this).find('.product_img').addClass('d-none');
-    });
+    })
 
     $('.remove_file').click(function() {
         $('img').attr('src', '');
@@ -146,5 +166,43 @@ $(document).ready(function () {
         var fileName = $(this).val().split('\\').pop();
         $(this).next('.custom-file-label').html(fileName);
     });
+
+    $(document).on('click','.delete-product', function(e) {
+        e.preventDefault();
+        let product_id = $(this).data('product-id');
+        var product_name = $(this).closest('tr').find('.product_name').text();
+        Swal.fire({
+            title: "Xác nhận",
+            text: `Bạn có muốn xóa sản phẩm ${product_name} không`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Đồng ý",
+            cancelButtonText: "Hủy bỏ"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "DELETE",
+                    url: delete_product_url.replace(":id", product_id),
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: response.message,
+                            willClose:() =>{
+                                window.location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Lỗi",
+                            text: "Đã xảy ra lỗi khi xóa sản phẩm."
+                        });
+                    }
+                });
+            }
+        });
+    })
 
 });

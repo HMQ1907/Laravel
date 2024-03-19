@@ -1,6 +1,6 @@
 <div id="table-product-info">
     @if ($products->total() != 0)
-        <div class="text-dark total_user">Hiển thị {{ $products->firstItem() }} đến {{ $products->lastItem() }} trong
+        <div class="text-dark total_product">Hiển thị {{ $products->firstItem() }} đến {{ $products->lastItem() }} trong
             tổng số {{ $products->total() }}
         </div>
     @endif
@@ -22,11 +22,11 @@
             @foreach ($products as $product)
                 <tr>
                     <th scope="row">{{ $product->product_id }}</th>
-                    <td class="product_name" data-image-src="{{ $product->product_image }}">{{ $product->product_name }}
-                        <span class="text-muted product_img d-none">qwe</span>
+                    <td data-image-src={{ $product->product_image }} class="product_name">{{ $product->product_name }}
+                        <span class="text-muted product_img d-none"></span>
                     </td>
-                    
-                    <td style="width: 40%" class="product_desc">{!! $product->description !!}</td>
+
+                    <td style="width: 40%; font-size:small;" class="product_desc">{!! $product->description !!}</td>
                     <td class="product_price">${{ number_format($product->product_price) }}</td>
                     <td class="product_stt">
                         @if ($product->is_active == 1)
@@ -37,8 +37,9 @@
                     </td>
                     <td>
                         <a href="{{ route('product.edit', ['id' => $product->product_id]) }}">
-                            <i data-product-id="{{ $product->product_id }}" style="cursor: pointer" class="fa fa-pencil edit-product" aria-hidden="true"></i>
-                        </a>                        
+                            <i data-product-id="{{ $product->product_id }}" style="cursor: pointer"
+                                class="fa fa-pencil edit-product" aria-hidden="true"></i>
+                        </a>
                         <i style="cursor: pointer" class="fa fa-trash-o delete-product ml-2" aria-hidden="true"
                             data-product-id={{ $product->product_id }}></i>
                     </td>

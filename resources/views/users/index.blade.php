@@ -49,7 +49,7 @@
                     <span class="input-group-text mr-1" id="basic-addon1"><i class="fa fa-times" aria-hidden="true"></i>
                     </span>
                 </div>
-                <button class="btn btn-danger">Xóa tìm</button>
+                <button id="delete-search-user" class="btn btn-danger">Xóa tìm</button>
             </div>
         </div>
     {{-- Table info users --}}
@@ -128,8 +128,8 @@
 @push('head')
     <script src="{{ asset('js/handle_users.js') }}"></script>
     <script>
-        let search_url = "{{ route('user.index') }}";
-        let create_url = "{{ route('user.create') }}";
+        let search_user_url = "{{ route('user.index') }}";
+        let create_user_url = "{{ route('user.create') }}";
         let detail_user_url = "{{ route('user.detail', ['id' => ':id']) }}";
         let edit_user_url = "{{ route('user.update', ['id' => ':id']) }}";
         let delete_user_url = "{{ route('user.delete', ['id' => ':id']) }}";

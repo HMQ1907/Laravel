@@ -44,7 +44,7 @@
                     <span class="input-group-text mr-1" id="basic-addon1"><i class="fa fa-times" aria-hidden="true"></i>
                     </span>
                 </div>
-                <button class="btn btn-danger">Xóa tìm</button>
+                <button id="delete-search-customer" class="btn btn-danger">Xóa tìm</button>
             </div>
         </div>
         <div class="d-flex flex-row justify-content-start">
@@ -63,7 +63,7 @@
                     <span class="input-group-text mr-1" id="basic-addon1"><i class="fa fa-upload" aria-hidden="true"></i></span>
                 </div>
                 <div class="custom-file">
-                    <input accept=".xls,.xlsx" type="file" class="" id="excelFile" name="excelFile" aria-describedby="inputGroupFileAddon01">
+                    <input accept=".xls,.xlsx," type="file" class="" id="excelFile" name="excelFile" aria-describedby="inputGroupFileAddon01">
                     <label style="width: 270px;" class="custom-file-label" for="excelFile">Chọn file Excel</label>
                 </div>
                 <button style="margin-right:690px;" id="importBtn" type="button" class="btn btn-info">Import excel</button>

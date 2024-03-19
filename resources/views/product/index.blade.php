@@ -9,6 +9,9 @@
     input[type=number] {
         -moz-appearance: textfield;
     }
+    td.product_desc * {
+        font-size: 12px;
+    }
 </style>
 @section('content')
     <div class="container">
@@ -69,7 +72,7 @@
                     <span class="input-group-text mr-1" id="basic-addon1"><i class="fa fa-times" aria-hidden="true"></i>
                     </span>
                 </div>
-                <button class="btn btn-danger">Xóa tìm</button>
+                <button id="delete-search" class="btn btn-danger">Xóa tìm</button>
             </div>
         </div>
 
@@ -81,6 +84,7 @@
 @push('head')
     <script src="{{ asset('js/handle_products.js') }}"></script>
     <script>
-        let search_url = "{{ route('product.index') }}";
+        let search_product_url = "{{ route('product.index') }}";
+        let delete_product_url = "{{ route('product.delete', ['id' => ':id']) }}";
     </script>
 @endpush

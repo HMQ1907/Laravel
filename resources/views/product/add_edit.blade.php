@@ -47,9 +47,9 @@
                         <input type="file" class="custom-file-input" id="imageUpload">
                         <label class="custom-file-label" for="imageUpload">Chọn file</label>
                     </div>
-                    <button class="btn btn-danger remove_file mt-2">Xóa file</button>
+                    <button class="btn btn-danger mt-2 remove_file">Xóa file</button>
                 </div>
-                <img src="{{ isset($product) ? asset($product->product_image) : '' }}" alt="">
+                <img width="250px;" src="{{ isset($product) ? asset($product->product_image) : '' }}" alt="">
 
             </div>
         </div>
@@ -59,8 +59,8 @@
 @push('head')
     <script src="{{ asset('js/handle_products.js') }}"></script>
     <script>
-        let create_url = "{{ route('product.create') }}";
-        let update_url = "{{ route('product.update', ['id' => ':id']) }}";
+        let create_product_url = "{{ route('product.create') }}";
+        let update_product_url = "{{ route('product.update', ['id' => ':id']) }}";
     </script>
     <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
     <script>

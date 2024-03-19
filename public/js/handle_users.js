@@ -1,6 +1,7 @@
 $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     const user_name_url = urlParams.get('user_name');
+    let isCreateMode = true;
 
     $('#user_name').val(user_name_url);
 
@@ -37,13 +38,27 @@ $(document).ready(function () {
     });
 
     $("#search-user").click(function (e) {
-        e.preventDefault(); 
+        e.preventDefault();
+        searchUsers();
+    });
+
+    $("#delete-search-user").click(function (e) {
+        e.preventDefault();
+
+        $("#user_name").val("");
+        $("#user_email").val("");
+        $("#user_group_role").val("");
+        $("#user_is_active").val("");
+        searchUsers();
+    })
+
+    function searchUsers(){
         let user_name = $("#user_name").val();
         let user_email = $("#user_email").val();
         let user_group_role = $("#user_group_role").val();
         let user_is_active = $("#user_is_active").val();
 
-        let urlWithParams = `${search_url}?user_name=${user_name}&user_email=${user_email}&user_group_role=${user_group_role}&user_is_active=${user_is_active}`;
+        let urlWithParams = `${search_user_url}?user_name=${user_name}&user_email=${user_email}&user_group_role=${user_group_role}&user_is_active=${user_is_active}`;
         let newUrl = window.location.pathname + '?' + urlWithParams.split('?')[1];
         history.pushState(null, null, newUrl);
         $.ajax({
@@ -62,11 +77,8 @@ $(document).ready(function () {
                 }
             },
         });
-       
-    });
+    }
     
-    let isCreateMode = true;
-
     $("#addUserBtn").click(function () {
         isCreateMode = true;
         $("#create_edit_user").removeAttr("data-user-id");
@@ -186,7 +198,7 @@ $(document).ready(function () {
         if (isCreateMode) {
             $.ajax({
                 type: "POST",
-                url: create_url,
+                url: create_user_url,
                 data: {
                     name: name,
                     email: email,
@@ -213,10 +225,9 @@ $(document).ready(function () {
             });
         } else {
             let userID = $(this).attr('data-user-id');
-            let edit_url = edit_user_url.replace(":id", userID);
             $.ajax({
                 type: "PUT",
-                url: edit_url,
+                url: edit_user_url.replace(":id", userID),
                 data: {
                     id: userID,
                     name: name,

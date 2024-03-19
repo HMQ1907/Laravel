@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Excel as ExcelType;
 use App\Imports\CustomersImport;
 class CustomerController extends Controller
+
 {
     protected function buildQuery(Request $request)
     {
@@ -72,15 +73,11 @@ class CustomerController extends Controller
     {
         try {
             $cusId = $request->input('customer_id');
-            $customer = Customer::find($request->input('customer_id'));
-            if (!$customer) {
-                return response()->json(['error' => 'Người dùng không tồn tại'], 404);
-            }
+
             $messages = [
                 'customer_email.unique' => 'Email này đã được đăng kí',
                 'customer_tel.regex' => 'Số điện thoại không hợp lệ',
             ];
-
             $validator = Validator::make(
                 $request->all(),
                 [
@@ -95,6 +92,11 @@ class CustomerController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->first()], 400);
             }
+            $customer = Customer::find($request->input('customer_id'));
+            if (!$customer) {
+                return response()->json(['error' => 'Người dùng không tồn tại'], 404);
+            }
+           
             $customer->customer_name = $request->input('customer_name');
             $customer->email = $request->input('customer_email');
             $customer->tel_num = $request->input('customer_tel');
@@ -153,7 +155,9 @@ class CustomerController extends Controller
             $errors = $e->failures();
             $errorMessage = 'Lỗi trong quá trình import:';
             foreach ($errors as $error) {
+
                 $errorMessage .= '<br>' . $error->errors()[0];
+                
             }
 
             return response()->json(['error' => $errorMessage], 500);
@@ -161,4 +165,5 @@ class CustomerController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+    
 }

@@ -60,11 +60,6 @@ class UserController extends Controller
         try {
             $userId = $request->input('id');
 
-            $user = User::find($userId);
-            if (!$user) {
-                return response()->json(['error' => 'Người dùng không tồn tại'], 404);
-            }
-
             $messages = [
                 'email.unique' => 'Email này đã được đăng kí',
             ];
@@ -84,12 +79,17 @@ class UserController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->first()], 400);
             }
-
+            $user = User::find($userId);
+            if (!$user) {
+                return response()->json(['error' => 'Người dùng không tồn tại'], 404);
+            }
             $user->name = $request->input('name');
             $user->email = $request->input('email');
+
             if ($request->input('password') && $request->input('password') != '') {
                 $user->password = bcrypt($request->input('password'));
             }
+
             $user->group_role = $request->input('user_group_role');
             $user->is_active = $request->input('is_active');
             $user->save();
