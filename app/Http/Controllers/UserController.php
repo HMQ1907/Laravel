@@ -26,7 +26,7 @@ class UserController extends Controller
                 $query->where('is_active', $request->input('user_is_active'));
             }
 
-            $users = $query->paginate(20);
+            $users = $query->orderBy('created_at','desc')->paginate(20);
 
             if ($request->ajax()) {
                 if ($users->isEmpty()) {
@@ -62,12 +62,13 @@ class UserController extends Controller
 
             $messages = [
                 'email.unique' => 'Email này đã được đăng kí',
+                'name.min'=> 'Tên phải lớn hơn 5 kí tự',
             ];
 
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name' => 'required|string|max:255',
+                    'name' => 'required|min:5|string|max:255',
                     'email' => 'required|string|email|max:255|unique:users,email,' . $userId,
                     'password' => 'nullable|string|min:6',
                     'user_group_role' => 'required|string|max:255',

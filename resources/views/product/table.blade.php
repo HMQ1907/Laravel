@@ -10,7 +10,7 @@
     <table class="table">
         <thead>
             <tr class="bg-danger text-light">
-                <th scope="col">#</th>
+                <th scope="col">ID</th>
                 <th scope="col">Tên sản phẩm</th>
                 <th scope="col">Mô tả</th>
                 <th scope="col">Giá</th>

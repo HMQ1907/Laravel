@@ -9,7 +9,7 @@
     <table class="table">
         <thead>
             <tr class="bg-danger text-light">
-                <th scope="col">#</th>
+                <th scope="col">ID</th>
                 <th scope="col">Họ tên</th>
                 <th scope="col">Email</th>
                 <th scope="col">Nhóm</th>

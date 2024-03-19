@@ -73,6 +73,7 @@ $(document).ready(function () {
         searchProducts();
     });
 
+
     $(document).on("click","#create_edit_product",function(e) {
 
         e.preventDefault();
