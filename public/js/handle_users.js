@@ -170,10 +170,10 @@ $(document).ready(function () {
             );
         }
         if (!name) {
-            error_messages.push("Vui lòng nhập tên người dùng.");
+            $("#nameError").text("Vui lòng nhập tên người dùng.");
         }
         if (!email) {
-            error_messages.push("Vui lòng nhập email người dùng.");
+            $("#emailError").text("Vui lòng nhập email người dùng.");
         }
         if (email && !validateEmail(email)) {
             error_messages.push("Email không đúng định dạng");
@@ -215,12 +215,14 @@ $(document).ready(function () {
                             window.location.reload();
                         }
                     });
-                 },error: function (response) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Thất bại',
-                        text: response.responseJSON.message,
-                    });
+                }, error: function (xhr) {
+                    if (xhr.responseJSON) {
+                        $.each(xhr.responseJSON.errors, function (key, value) {
+                            $("#" + key + "Error").text(value);
+                        });
+                    } else {
+                        $("#alert_error").html("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+                    }
                 }
             });
         } else {

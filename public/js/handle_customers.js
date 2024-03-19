@@ -8,9 +8,19 @@ $(document).ready(function () {
 
     $(document).on("click", ".page-link", function (e) {
         e.preventDefault();
-
+    
         let nextPageUrl = $(this).attr("href");
-
+        let params = new URLSearchParams(nextPageUrl.split("?")[1]); 
+    
+        let currentParams = new URLSearchParams(window.location.search);
+        params.forEach(function(value, key) {
+            currentParams.set(key, value);
+        });
+    
+        let newUrl = window.location.pathname + "?" + currentParams.toString();
+    
+        history.pushState({}, '', newUrl);
+    
         $.ajax({
             url: nextPageUrl,
             method: "GET",
@@ -30,8 +40,11 @@ $(document).ready(function () {
             },
         });
     });
-
-    $("#customer_name, #customer_email, #customer_status, #customer_address").keypress(function (event) {
+    
+    
+    $(
+        "#customer_name, #customer_email, #customer_status, #customer_address"
+    ).keypress(function (event) {
         if (event.which == 13) {
             event.preventDefault();
             $("#search-customer").click();
@@ -45,14 +58,14 @@ $(document).ready(function () {
 
     $("#delete-search-customer").click(function (e) {
         e.preventDefault();
-        $("#customer_name").val('');
-        $("#customer_email").val('');
-        $("#customer_status").val('');
-        $("#customer_address").val('');
+        $("#customer_name").val("");
+        $("#customer_email").val("");
+        $("#customer_status").val("");
+        $("#customer_address").val("");
         searchCustomers();
     });
 
-    function searchCustomers(){
+    function searchCustomers() {
         let customer_name = $("#customer_name").val();
         let customer_email = $("#customer_email").val();
         let customer_status = $("#customer_status").val();
@@ -76,8 +89,7 @@ $(document).ready(function () {
                         '<tr><td colspan="6">Không có dữ liệu</td></tr>'
                     );
                     $(".pagination").html("");
-                    $(".total_customer").html('');
-
+                    $(".total_customer").html("");
                 }
             },
         });
@@ -221,73 +233,71 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on("click", ".delete-customer", function(e){
+    $(document).on("click", ".delete-customer", function (e) {
         e.preventDefault();
-        let cus_id = $(this).attr('data-customer-id');
-        var cus_name = $(this).closest('tr').find('.customer_name').text();
+        let cus_id = $(this).attr("data-customer-id");
+        var cus_name = $(this).closest("tr").find(".customer_name").text();
         Swal.fire({
             title: "Xác nhận",
             text: `Bạn có muốn xóa khách hàng ${cus_name} không`,
             icon: "question",
             showCancelButton: true,
             confirmButtonText: "Đồng ý",
-            cancelButtonText: "Hủy bỏ"
+            cancelButtonText: "Hủy bỏ",
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
                     type: "DELETE",
                     url: delete_cus_url.replace(":id", cus_id),
-                    success: function(response) {
+                    success: function (response) {
                         Swal.fire({
-                            icon: 'success',
-                            title: 'Thành công',
+                            icon: "success",
+                            title: "Thành công",
                             text: response.message,
-                            willClose:() =>{
+                            willClose: () => {
                                 window.location.reload();
-                            }
+                            },
                         });
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         Swal.fire({
                             icon: "error",
                             title: "Lỗi",
-                            text: "Đã xảy ra lỗi khi xóa khách hàng."
+                            text: "Đã xảy ra lỗi khi xóa khách hàng.",
                         });
-                    }
+                    },
                 });
             }
         });
     });
 
     $(document).on("click", "#exportCus", function () {
-
         let cus_name = $("#customer_name").val();
         let cus_email = $("#customer_email").val();
         let cus_status = $("#customer_status").val();
         let cus_address = $("#customer_address").val();
 
         let urlWithParams = `${export_cus_url}?customer_name=${cus_name}&customer_email=${cus_email}&customer_status=${cus_status}&customer_address=${cus_address}`;
-        window.location = urlWithParams
-
-    });
-    
-    $('#excelFile').change(function () {
-        var fileName = $(this).val().split('\\').pop();
-        $(this).next('.custom-file-label').html(fileName);
+        window.location = urlWithParams;
     });
 
-    $("#importBtn").click(function(e) {
+    $("#excelFile").change(function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).next(".custom-file-label").html(fileName);
+    });
+
+    $("#importBtn").click(function (e) {
         e.preventDefault();
-        let fileInput = document.getElementById('excelFile');
+        let fileInput = document.getElementById("excelFile");
         let file = fileInput.files[0];
-        
+
         if (!file) {
-            alert('Chưa chọn file');
+            alert("Chưa chọn file");
             return;
         }
-    
+
         let reader = new FileReader();
-        reader.onload = function(e) {    
+        reader.onload = function (e) {
             $.ajax({
                 type: "POST",
                 url: import_cus_url,
@@ -309,16 +319,17 @@ $(document).ready(function () {
                     Swal.fire({
                         icon: "error",
                         title: "Lỗi",
-                        html: response.responseJSON.error.replace(/\n/g, "<br>"),
+                        html: response.responseJSON.error.replace(
+                            /\n/g,
+                            "<br>"
+                        ),
                     });
                 },
             });
         };
-    
-        reader.readAsArrayBuffer(file); 
+
+        reader.readAsArrayBuffer(file);
     });
-    
-    
 });
 
 function validateEmail(email) {
