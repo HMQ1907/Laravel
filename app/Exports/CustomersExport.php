@@ -34,10 +34,10 @@ class CustomersExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'Tên khách hàng',
-            'Email',
-            'TelNum',
-            'Địa chỉ',
+            'ten_khach_hang',
+            'email',
+            'tel_num',
+            'address',
         ];
     }
 }

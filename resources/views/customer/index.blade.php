@@ -93,21 +93,25 @@
                             <label for="name">Tên</label>
                             <input type="text" id="name" name="name" class="form-control"
                                 aria-describedby="emailHelp" placeholder="Customer name">
+                            <span id="customer_name_error" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="Email">Email</label>
                             <input type="text" name="email" id="email" class="form-control"
                                 aria-describedby="emailHelp" placeholder="Customer email">
+                            <span id="cus_email_error" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="tel-num">Điện thoại</label>
                             <input name="tel-num" type="text" class="form-control" id="tel-num"
                                 placeholder="Phone number">
+                            <span id="cus_phone_error" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="address">Địa chỉ</label>
                             <input type="text" class="form-control" id="address" name="address"
                                 placeholder="Customer address">
+                            <span id="cus_address_error" class="text-danger"></span>
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-4">Trạng thái</div>
@@ -120,8 +124,6 @@
                                     </label>
                                 </div>
                             </div>
-                        </div>
-                        <div id="alert_error" class="text-danger" role="alert">
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-danger" type="button" class="close" data-dismiss="modal"

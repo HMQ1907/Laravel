@@ -1,6 +1,9 @@
 $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     const user_name_url = urlParams.get('user_name');
+    let nameError = $("#nameError");
+    let emailError = $("#emailError");
+    let passwordError = $("#passwordError");
     let isCreateMode = true;
 
     $('#user_name').val(user_name_url);
@@ -10,7 +13,17 @@ $(document).ready(function () {
     $(document).on('click', '.page-link', function(e) {
         e.preventDefault();
     
-        let nextPageUrl = $(this).attr('href');
+        let nextPageUrl = $(this).attr("href");
+        let params = new URLSearchParams(nextPageUrl.split("?")[1]); 
+    
+        let currentParams = new URLSearchParams(window.location.search);
+        params.forEach(function(value, key) {
+            currentParams.set(key, value);
+        });
+    
+        let newUrl = window.location.pathname + "?" + currentParams.toString();
+    
+        history.pushState({}, '', newUrl);
     
         $.ajax({
             url: nextPageUrl,
@@ -81,17 +94,25 @@ $(document).ready(function () {
     
     $("#addUserBtn").click(function () {
         isCreateMode = true;
+
+        nameError.text('');
+        emailError.text('');
+        passwordError.text('');
+
         $("#create_edit_user").removeAttr("data-user-id");
         $("#title_form").text("Thêm mới User");
         $("#userForm")[0].reset();
         $("#create_edit_user").text("Tạo User");
-        $("#alert_error").empty();
         $("#addEditUserModal").modal("show");
+
     });
 
     $(document).on("click", ".edit_user", function (e) {
         isCreateMode = false;
         e.preventDefault();
+        nameError.text('');
+        emailError.text('');
+        passwordError.text('');
         $("#title_form").text("Chỉnh sửa người dùng");
         $("#create_edit_user").text("Chỉnh sửa ");
         $("#addEditUserModal").modal("show");
@@ -156,45 +177,55 @@ $(document).ready(function () {
     });
 
     $("#create_edit_user").click(function () {
-        let name = $("#name").val();
-        let email = $("#email").val();
-        let password = $("#password").val();
-        let confirm_password = $("#confirm_password").val();
+
+        nameError.text('');
+        emailError.text('');
+        passwordError.text('');
+
+        let name = $("#name").val().trim();
+        let email = $("#email").val().trim();
+        let password = $("#password").val().trim();
+        let confirm_password = $("#confirm_password").val().trim();;
         let user_group_role = $("#group_user").val();
         let is_active = $("#is_active").is(":checked") ? 1 : 0;
-        let error_messages = [];
+        
+
+        if (!name) {
+            nameError.text('Vui lòng nhập tên người dùng.');
+        }
+
+        if (!email) {
+            emailError.text('Vui lòng nhập email người dùng.');
+        }
+
+        if (email && !validateEmail(email)) {
+            emailError.text('Email không đúng định dạng.');
+        }
+
+        if (isCreateMode && !password) {
+            passwordError.text('Vui lòng nhập mật khẩu người dùng.');
+        }
+        
+        if (isCreateMode && name && name.length < 5) {
+            $("#nameError").text('Tên người dùng phải có ít nhất 5 ký tự.');
+        }
+        
+        if ((!isCreateMode && password && password.length < 5) || (isCreateMode && password && password.length < 5)) {
+            passwordError.text('Mật khẩu người dùng phải có ít nhất 5 ký tự.');
+        }
+
+        if ((!isCreateMode && password && !validatePassword(password)) || (isCreateMode && password &&  !validatePassword(password))) {
+            passwordError.text('Mật khẩu không bảo mật.');
+        }
 
         if (password !== confirm_password) {
-            error_messages.push(
-                "Mật khẩu và xác nhận mật khẩu không chính xác."
-            );
-        }
-        if (!name) {
-            $("#nameError").text("Vui lòng nhập tên người dùng.");
-        }
-        if (!email) {
-            $("#emailError").text("Vui lòng nhập email người dùng.");
-        }
-        if (email && !validateEmail(email)) {
-            error_messages.push("Email không đúng định dạng");
-        }
-        if (isCreateMode && !password) {
-            error_messages.push("Vui lòng nhập mật khẩu người dùng.");
-        }
-        if (isCreateMode && name && name.length < 5) {
-            error_messages.push("Tên người dùng phải có ít nhất 5 ký tự.");
-        }
-        if ((!isCreateMode && password && password.length < 5) || (isCreateMode && password && password.length < 5)) {
-            error_messages.push("Mật khẩu người dùng phải có ít nhất 5 ký tự.");
-        }
-        if ((!isCreateMode && password && !validatePassword(password)) || (isCreateMode && password &&  !validatePassword(password))) {
-            error_messages.push("Mật khẩu không bảo mật");
+            passwordError.text('Mật khẩu và xác nhận mật khẩu không chính xác.');
         }
 
-        if (error_messages.length > 0) {
-            $("#alert_error").html(error_messages.join("<br>"));
+        if ( nameError.text() != '' || emailError.text() != '' || passwordError.text() != '') {
             return false;
         }
+
         if (isCreateMode) {
             $.ajax({
                 type: "POST",
@@ -215,14 +246,8 @@ $(document).ready(function () {
                             window.location.reload();
                         }
                     });
-                }, error: function (xhr) {
-                    if (xhr.responseJSON) {
-                        $.each(xhr.responseJSON.errors, function (key, value) {
-                            $("#" + key + "Error").text(value);
-                        });
-                    } else {
-                        $("#alert_error").html("Đã xảy ra lỗi. Vui lòng thử lại sau.");
-                    }
+                 },error: function (response) {
+                    emailError.text(response.responseJSON.errors.email);
                 }
             });
         } else {
@@ -247,13 +272,12 @@ $(document).ready(function () {
                             window.location.reload();
                         }
                     });
-                 },error: function (response) {
-                    console.log(response);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Thất bại',
-                        text: response.responseJSON.error,
-                    });
+                },error: function (response) {
+                    if(response.responseJSON.name_error){
+                        nameError.text(response.responseJSON.name_error);
+                    }if(response.responseJSON.email_error){
+                        emailError.text(response.responseJSON.email_error);
+                    }
                 },
             });
         }

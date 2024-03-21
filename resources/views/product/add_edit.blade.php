@@ -9,21 +9,25 @@
                     <input value="{{ isset($product) ? $product->product_name : '' }}" type="text" name="product_name"
                         type="text" class="form-control" id="product_name" placeholder="Nhập tên sản phẩm" required>
                     <div class="invalid-feedback">Tên sản phẩm không được để trống</div>
+                    <span id="pro_name_error" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label for="price">Giá bán</label>
                     <input value="{{ isset($product) ? number_format($product->product_price) : '' }}" type="number"
                         class="form-control" id="product_price" placeholder="Nhập giá bán" min="1"required
                         name="product_price">
+                    <span id="pro_price_error" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label for="description">Mô tả</label>
                     <textarea name="product_desc" class="form-control" id="product_desc" rows="3" placeholder="Mô tả sản phẩm">{!! isset($product) ? $product->description : '' !!}</textarea>
+                    <span id="pro_desc_error" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label for="status">Trạng thái</label>
                     <select name="is_active" class="form-control" id="is_active">
-                        <option selected value="1" {{ isset($product) && $product->is_active == 1 ? 'selected' : '' }}>Đang bán
+                        <option selected value="1" {{ isset($product) && $product->is_active == 1 ? 'selected' : '' }}>
+                            Đang bán
                         </option>
                         <option value="0" {{ isset($product) && $product->is_active == 0 ? 'selected' : '' }}>Hết hàng
                         </option>
@@ -44,13 +48,13 @@
                 <div class="form-group">
                     <label for="imageUpload">Hình ảnh</label>
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="imageUpload">
+                        <input accept="image/png, image/jpeg, image/jpg" type="file" class="custom-file-input" id="imageUpload">
                         <label class="custom-file-label" for="imageUpload">Chọn file</label>
                     </div>
                     <button class="btn btn-danger mt-2 remove_file">Xóa file</button>
                 </div>
                 <img width="250px;" src="{{ isset($product) ? asset($product->product_image) : '' }}" alt="">
-
+                <span id="pro_img_error" class="text-danger"></span>
             </div>
         </div>
     </div>

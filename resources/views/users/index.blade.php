@@ -52,8 +52,8 @@
                 <button id="delete-search-user" class="btn btn-danger">Xóa tìm</button>
             </div>
         </div>
-        {{-- Table info users --}}
-        @include('users.table')
+    {{-- Table info users --}}
+    @include('users.table')
     </div>
     <!-- Modal -->
     <div class="modal fade" id="addEditUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -68,72 +68,74 @@
                 </div>
                 <div class="modal-body">
                     {{-- Start Form --}}
-                <form id="userForm" action="">
-                    <div class="form-group">
-                        <label for="name">Tên</label>
-                        <input type="text" id="name" name="name" class="form-control"
-                            aria-describedby="emailHelp" placeholder="Enter Name">
-                        <span id="nameError" class="text-danger"></span>
-
-                    </div>
-                    <div class="form-group">
-                        <label for="Email">Email</label>
-                        <input type="text" name="email" id="email" class="form-control"
-                            aria-describedby="emailHelp" placeholder="Enter Email">
-                        <span id="emailError" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input name="password" type="password" class="form-control" id="password"
-                            placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                        <label for="confirm_pasword">Xác nhận</label>
-                        <input type="password" class="form-control" id="confirm_password" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                        <label for="group_user">Nhóm</label>
-                        <select name="group_user" class="form-control" id="group_user">
-                            <option value="admin">Admin</option>
-                            <option value="editor">Editor</option>
-                            <option value="reviewer">Reviewer</option>
-                        </select>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-4">Trạng thái</div>
-                        <div class="col-sm-10">
-                            <div class="form-check">
-                                <input name="is_active" checked class="form-check-input" type="checkbox" id="is_active">
-                                <label class="form-check-label" for="gridCheck1">
-                                    Hoạt động
-                                </label>
+                    <form id="userForm">
+                        @csrf
+                        <div class="form-group">
+                            <label for="name">Tên</label>
+                            <input type="text" id="name" name="name" class="form-control"
+                                aria-describedby="emailHelp" placeholder="Enter Name">
+                            <span id="nameError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="Email">Email</label>
+                            <input type="text" name="email" id="email" class="form-control"
+                                aria-describedby="emailHelp" placeholder="Enter Email">
+                            <span id="emailError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input name="password" type="password" class="form-control" id="password"
+                                placeholder="Password">
+                            <span class="text-danger" id="passwordError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_pasword">Xác nhận</label>
+                            <input type="password" class="form-control" id="confirm_password" placeholder="Password">
+                        </div>
+                        <div class="form-group">
+                            <label for="group_user">Nhóm</label>
+                            <select name="group_user" class="form-control" id="group_user">
+                                <option value="admin">Admin</option>
+                                <option value="editor">Editor</option>
+                                <option value="reviewer">Reviewer</option>
+                            </select>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-4">Trạng thái</div>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                    <input name="is_active" checked class="form-check-input" type="checkbox"
+                                        id="is_active">
+                                    <label class="form-check-label" for="gridCheck1">
+                                        Hoạt động
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="alert_error" class="text-danger" role="alert">
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-danger" type="button" class="close" data-dismiss="modal"
-                            aria-label="Close">
-                            Hủy
-                        </button>
-                        <button id="create_edit_user" type="button" class="btn btn-primary"></button>
-                    </div>
+                        <div id="alert_error" class="text-danger" role="alert">
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                                Hủy
+                            </button>
+                            <button id="create_edit_user" type="button" class="btn btn-primary"></button>
+                    </form>
                 </div>
-            </form>
             </div>
         </div>
-    @endsection
+    </div>
+@endsection
 
 
-    @push('head')
-        <script src="{{ asset('js/handle_users.js') }}"></script>
-        <script>
-            let search_user_url = "{{ route('user.index') }}";
-            let create_user_url = "{{ route('user.create') }}";
-            let detail_user_url = "{{ route('user.detail', ['id' => ':id']) }}";
-            let edit_user_url = "{{ route('user.update', ['id' => ':id']) }}";
-            let delete_user_url = "{{ route('user.delete', ['id' => ':id']) }}";
-            let block_user_url = "{{ route('user.block', ['id' => ':id']) }}";
-        </script>
-    @endpush
+@push('head')
+    <script src="{{ asset('js/handle_users.js') }}"></script>
+    <script>
+        let search_user_url = "{{ route('user.index') }}";
+        let create_user_url = "{{ route('user.create') }}";
+        let detail_user_url = "{{ route('user.detail', ['id' => ':id']) }}";
+        let edit_user_url = "{{ route('user.update', ['id' => ':id']) }}";
+        let delete_user_url = "{{ route('user.delete', ['id' => ':id']) }}";
+        let block_user_url = "{{ route('user.block', ['id' => ':id']) }}";
+    </script>
+@endpush

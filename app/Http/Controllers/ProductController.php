@@ -8,10 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
-
 {
-
-    protected $path = "images/products" ;
+    protected $path = 'images/products';
 
     public function index(Request $request)
     {
@@ -59,7 +57,6 @@ class ProductController extends Controller
     public function create(ProductRequest $request)
     {
         try {
-            
             if (!file_exists(public_path($this->path))) {
                 mkdir(public_path($this->path), 0777, true);
             }
@@ -85,7 +82,12 @@ class ProductController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
+    /**
+     * Get a single product
+     *
+     * @param int $id The product ID
+     * @return \Illuminate\Http\Response
+     */
     public function getProduct($id)
     {
         try {
@@ -127,14 +129,12 @@ class ProductController extends Controller
             }
 
             if ($request->hasFile('image')) {
-
                 if ($product->product_image) {
                     $oldImagePath = public_path($product->product_image);
 
                     if (file_exists($oldImagePath)) {
                         unlink($oldImagePath);
                     }
-
                 }
 
                 $file = $request->file('image');

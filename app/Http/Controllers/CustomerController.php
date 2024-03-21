@@ -77,11 +77,12 @@ class CustomerController extends Controller
             $messages = [
                 'customer_email.unique' => 'Email này đã được đăng kí',
                 'customer_tel.regex' => 'Số điện thoại không hợp lệ',
+                'customer_name.min'=>'Tên khách hàng tối thiểu 5 kí tự',
             ];
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'customer_name' => 'required|string|max:255',
+                    'customer_name' => 'required|string|min:5|max:255',
                     'customer_email' => 'required|string|email|max:255|unique:customers,email,' . $cusId . ',customer_id',
                     'customer_address' => 'required|string|max:255',
                     'customer_tel' => 'required|string|regex:/^\d{10}$/',
@@ -92,6 +93,7 @@ class CustomerController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->first()], 400);
             }
+
             $customer = Customer::find($request->input('customer_id'));
             if (!$customer) {
                 return response()->json(['error' => 'Người dùng không tồn tại'], 404);
@@ -107,7 +109,7 @@ class CustomerController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
+    
     public function delete($id)
     {
         try {
@@ -159,7 +161,6 @@ class CustomerController extends Controller
                 $errorMessage .= '<br>' . $error->errors()[0];
                 
             }
-
             return response()->json(['error' => $errorMessage], 500);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

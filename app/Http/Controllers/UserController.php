@@ -26,7 +26,7 @@ class UserController extends Controller
                 $query->where('is_active', $request->input('user_is_active'));
             }
 
-            $users = $query->orderBy('created_at','desc')->paginate(20);
+            $users = $query->orderBy('created_at', 'desc')->paginate(20);
 
             if ($request->ajax()) {
                 if ($users->isEmpty()) {
@@ -54,7 +54,7 @@ class UserController extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
-
+    
     public function update(Request $request)
     {
         try {
@@ -62,10 +62,11 @@ class UserController extends Controller
 
             $messages = [
                 'email.unique' => 'Email này đã được đăng kí',
-                'name.min'=> 'Tên phải lớn hơn 5 kí tự',
+                'name.min' => 'Tên phải lớn hơn 5 kí tự',
             ];
 
             $validator = Validator::make(
+
                 $request->all(),
                 [
                     'name' => 'required|min:5|string|max:255',
@@ -78,8 +79,18 @@ class UserController extends Controller
             );
 
             if ($validator->fails()) {
+                $errors = $validator->errors();
+
+                $emailError = $errors->first('email');
+                $nameError = $errors->first('name');
+
+                if ($emailError || $nameError) {
+                    return response()->json(['email_error' => $emailError, 'name_error' => $nameError], 400);
+                }
+
                 return response()->json(['error' => $validator->errors()->first()], 400);
             }
+
             $user = User::find($userId);
             if (!$user) {
                 return response()->json(['error' => 'Người dùng không tồn tại'], 404);

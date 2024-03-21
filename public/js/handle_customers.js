@@ -1,6 +1,11 @@
 $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     const cus_name_url = urlParams.get("customer_name");
+    
+    let customer_name_error = $("#customer_name_error");
+    let cus_email_error = $("#cus_email_error");
+    let cus_phone_error = $("#cus_phone_error");
+    let cus_address_error = $("#cus_address_error");
 
     $("#customer_name").val(cus_name_url);
 
@@ -40,11 +45,8 @@ $(document).ready(function () {
             },
         });
     });
-    
-    
-    $(
-        "#customer_name, #customer_email, #customer_status, #customer_address"
-    ).keypress(function (event) {
+
+    $("#customer_name, #customer_email, #customer_status, #customer_address").keypress(function (event) {
         if (event.which == 13) {
             event.preventDefault();
             $("#search-customer").click();
@@ -58,14 +60,14 @@ $(document).ready(function () {
 
     $("#delete-search-customer").click(function (e) {
         e.preventDefault();
-        $("#customer_name").val("");
-        $("#customer_email").val("");
-        $("#customer_status").val("");
-        $("#customer_address").val("");
+        $("#customer_name").val('');
+        $("#customer_email").val('');
+        $("#customer_status").val('');
+        $("#customer_address").val('');
         searchCustomers();
     });
 
-    function searchCustomers() {
+    function searchCustomers(){
         let customer_name = $("#customer_name").val();
         let customer_email = $("#customer_email").val();
         let customer_status = $("#customer_status").val();
@@ -89,52 +91,65 @@ $(document).ready(function () {
                         '<tr><td colspan="6">Không có dữ liệu</td></tr>'
                     );
                     $(".pagination").html("");
-                    $(".total_customer").html("");
+                    $(".total_customer").html('');
+
                 }
             },
         });
     }
 
     $("#addCustomerBtn").click(function () {
+
+        customer_name_error.text('');
+        cus_email_error.text('');
+        cus_phone_error.text('');
+        cus_address_error.text('');
+
+        $("#cusForm")[0].reset();
         $("#title_form").text("Thêm mới khách hàng");
         $("#alert_error").empty();
         $("#addCustomerModal").modal("show");
     });
 
     $("#create_customer").click(function () {
-        let name = $("#name").val();
-        let email = $("#email").val();
-        let tel_num = $("#tel-num").val();
-        let address = $("#address").val();
+
+        customer_name_error.text('');
+        cus_email_error.text('');
+        cus_phone_error.text('');
+        cus_address_error.text('');
+
+        let name = $("#name").val().trim();
+        let email = $("#email").val().trim();
+        let tel_num = $("#tel-num").val().trim();
+        let address = $("#address").val().trim();
         let is_active = $("#is_active").is(":checked") ? 1 : 0;
-        let error_messages = [];
 
         if (!name) {
-            error_messages.push("Vui lòng nhập tên khách hàng");
+            customer_name_error.text('Vui lòng nhập tên khách hàng');
         }
         if (name && name.length < 5) {
-            error_messages.push("Tên khách hàng phải có ít nhất 5 ký tự.");
+            cus_name_error.text('Tên khách hàng phải có ít nhất 5 ký tự.');
         }
         if (!email) {
-            error_messages.push("Vui lòng nhập email khách hàng");
+            cus_email_error.text('Vui lòng nhập email khách hàng');
         }
         if (!tel_num) {
-            error_messages.push(" Vui lòng nhập số điện thoại khách hàng");
+            cus_phone_error.text('Vui lòng nhập số điện thoại khách hàng');
         }
         if (tel_num && !validatePhoneNumber(tel_num)) {
-            error_messages.push("Số điện thoại không đúng định dạng");
+            cus_phone_error.text('Số điện thoại không đúng định dạng');
         }
         if (email && !validateEmail(email)) {
-            error_messages.push("Email không đúng định dạng");
+            cus_email_error.text('Email không đúng định dạng');
         }
         if (!address) {
-            error_messages.push("Vui lòng nhập đia chỉ khách hàng");
+            cus_address_error.text('Vui lòng nhập đia chỉ khách hàng');
         }
 
-        if (error_messages.length > 0) {
-            $("#alert_error").html(error_messages.join("<br>"));
+        if ( customer_name_error.text() != '' || cus_email_error.text() != '' || cus_phone_error.text() != '' || cus_address_error.text() != '' ) {
             return false;
         }
+        
         $.ajax({
             type: "POST",
             url: create_cus_url,
@@ -156,11 +171,7 @@ $(document).ready(function () {
                 });
             },
             error: function (response) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Thất bại",
-                    text: response.responseJSON.message,
-                });
+                cus_email_error.text(response.responseJSON.message)
             },
         });
     });
@@ -233,71 +244,73 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on("click", ".delete-customer", function (e) {
+    $(document).on("click", ".delete-customer", function(e){
         e.preventDefault();
-        let cus_id = $(this).attr("data-customer-id");
-        var cus_name = $(this).closest("tr").find(".customer_name").text();
+        let cus_id = $(this).attr('data-customer-id');
+        var cus_name = $(this).closest('tr').find('.customer_name').text();
         Swal.fire({
             title: "Xác nhận",
             text: `Bạn có muốn xóa khách hàng ${cus_name} không`,
             icon: "question",
             showCancelButton: true,
             confirmButtonText: "Đồng ý",
-            cancelButtonText: "Hủy bỏ",
+            cancelButtonText: "Hủy bỏ"
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
                     type: "DELETE",
                     url: delete_cus_url.replace(":id", cus_id),
-                    success: function (response) {
+                    success: function(response) {
                         Swal.fire({
-                            icon: "success",
-                            title: "Thành công",
+                            icon: 'success',
+                            title: 'Thành công',
                             text: response.message,
-                            willClose: () => {
+                            willClose:() =>{
                                 window.location.reload();
-                            },
+                            }
                         });
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         Swal.fire({
                             icon: "error",
                             title: "Lỗi",
-                            text: "Đã xảy ra lỗi khi xóa khách hàng.",
+                            text: "Đã xảy ra lỗi khi xóa khách hàng."
                         });
-                    },
+                    }
                 });
             }
         });
     });
 
     $(document).on("click", "#exportCus", function () {
+
         let cus_name = $("#customer_name").val();
         let cus_email = $("#customer_email").val();
         let cus_status = $("#customer_status").val();
         let cus_address = $("#customer_address").val();
 
         let urlWithParams = `${export_cus_url}?customer_name=${cus_name}&customer_email=${cus_email}&customer_status=${cus_status}&customer_address=${cus_address}`;
-        window.location = urlWithParams;
+        window.location = urlWithParams
+
+    });
+    
+    $('#excelFile').change(function () {
+        var fileName = $(this).val().split('\\').pop();
+        $(this).next('.custom-file-label').html(fileName);
     });
 
-    $("#excelFile").change(function () {
-        var fileName = $(this).val().split("\\").pop();
-        $(this).next(".custom-file-label").html(fileName);
-    });
-
-    $("#importBtn").click(function (e) {
+    $("#importBtn").click(function(e) {
         e.preventDefault();
-        let fileInput = document.getElementById("excelFile");
+        let fileInput = document.getElementById('excelFile');
         let file = fileInput.files[0];
-
+        
         if (!file) {
-            alert("Chưa chọn file");
+            alert('Chưa chọn file');
             return;
         }
-
+    
         let reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = function(e) {    
             $.ajax({
                 type: "POST",
                 url: import_cus_url,
@@ -319,17 +332,16 @@ $(document).ready(function () {
                     Swal.fire({
                         icon: "error",
                         title: "Lỗi",
-                        html: response.responseJSON.error.replace(
-                            /\n/g,
-                            "<br>"
-                        ),
+                        html: response.responseJSON.error.replace(/\n/g, "<br>"),
                     });
                 },
             });
         };
-
-        reader.readAsArrayBuffer(file);
+    
+        reader.readAsArrayBuffer(file); 
     });
+    
+    
 });
 
 function validateEmail(email) {
